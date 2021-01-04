@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask.ext.mysql import MySQL
 
 def create_app(test_config=None):
     # create and configure the app
@@ -18,6 +19,21 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    #mysql
+    mysql = MySQL()
+ 
+    # MySQL configurations
+    app.config['MYSQL_DATABASE_USER'] = 'g18'
+    app.config['MYSQL_DATABASE_PASSWORD'] = 'gd5qbk7z'
+    app.config['MYSQL_DATABASE_DB'] = 'g18'
+    app.config['MYSQL_DATABASE_HOST'] = '127.0.0.1'
+    mysql.init_app(app)
+
+    #global mysql connection
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
     # a simple page that says hello
     @app.route('/')
     def hello():
