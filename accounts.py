@@ -13,7 +13,7 @@ def accounts():
     return resp
 
 @accountsblueprint.route('/accounts/<int:id>')
-def accountsForId():
+def accountsForId(id):
     cursor = mysql.get_db().cursor()
 
     SQL="select * from accounts where idAccounts="+str(id) 
