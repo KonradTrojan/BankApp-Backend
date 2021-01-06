@@ -1,7 +1,11 @@
 from flask import Blueprint
+from project import cursor
 
 testblueprint = Blueprint('testblueprint', __name__)
 
 @testblueprint.route('/test')
 def test():
-    return "test"
+    SQL="select * from accounts"
+    cursor.execute(SQL)
+    data=cursor.fetchone()
+    return data
