@@ -5,8 +5,7 @@ testblueprint = Blueprint('testblueprint', __name__)
 
 @testblueprint.route('/test')
 def test():
-    conn = mysql.connect()
-    cursor = conn.cursor()
+    cursor = mysql.get_db().cursor()
     SQL="select * from accounts"
     cursor.execute(SQL)
     data=cursor.fetchall()
