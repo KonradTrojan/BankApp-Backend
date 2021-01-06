@@ -4,7 +4,7 @@ from flaskext.mysql import MySQL
 
 mysql = MySQL()
 
-from project.test import testblueprint
+from project.accounts import accountsblueprint
 
 def create_app(test_config=None):
     # create and configure the app
@@ -41,5 +41,5 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
-    app.register_blueprint(testblueprint)
+    app.register_blueprint(accountsblueprint)
     return app
