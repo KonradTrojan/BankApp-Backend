@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-import project.__init__.mysql
+from . import mysql
 
 testblueprint = Blueprint('testblueprint', __name__)
 
