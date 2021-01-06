@@ -12,7 +12,7 @@ def accounts():
     resp=jsonify(data)
     return resp
 
-@accountsblueprint.route('/accounts/<int:id>')
+@accountsblueprint.route('/accounts1/<int:id>')
 def accountsForId():
     cursor = mysql.get_db().cursor()
 
