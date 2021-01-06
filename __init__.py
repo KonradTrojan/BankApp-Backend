@@ -33,7 +33,8 @@ def create_app(test_config=None):
 
     #global mysql connection
     conn = mysql.connect()
-    global cursor = conn.cursor()
+    global cursor 
+    cursor = conn.cursor()
 
     # a simple page that says hello
     @app.route('/')
