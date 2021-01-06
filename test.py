@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-import __init__
+import project.__init__
 
 testblueprint = Blueprint('testblueprint', __name__)
 
