@@ -43,4 +43,5 @@ def create_app(test_config=None):
         return 'Hello, World!'
 
     app.register_blueprint(accountsblueprint)
+    app.register_blueprint(transactionsblueprint)
     return app
