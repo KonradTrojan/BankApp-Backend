@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flaskext.mysql import MySQL
-from test import test
+from test import testblueprint
 
 def create_app(test_config=None):
     # create and configure the app
@@ -41,6 +41,5 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
-    @app.route('/test')
-    test.test()
+    app.register_blueprint(testblueprint)
     return app
