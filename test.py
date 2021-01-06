@@ -9,7 +9,7 @@ def test():
     cursor = conn.cursor()
     SQL="select * from accounts"
     cursor.execute(SQL)
-    data=cursor.fetchone()
+    data=cursor.fetchall()
     resp=jsonify(data)
     return resp
     
