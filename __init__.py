@@ -6,6 +6,7 @@ mysql = MySQL()
 
 from project.accounts import accountsblueprint
 from project.transactions import transactionsblueprint
+from project.credit_cards import credit_cardsblueprint
 
 def create_app(test_config=None):
     # create and configure the app
@@ -44,4 +45,5 @@ def create_app(test_config=None):
 
     app.register_blueprint(accountsblueprint)
     app.register_blueprint(transactionsblueprint)
+    app.register_blueprint(credit_cardsblueprint)
     return app

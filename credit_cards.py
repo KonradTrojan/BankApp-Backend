@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify
 from . import mysql
 
-transactionsblueprint = Blueprint('transactionsblueprint', __name__)
+credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
 
-@transactionsblueprint.route('/transactions')
-def transactions():
+@credit_cardsblueprint.route('/credit_cards')
+def credit_cards():
     cursor = mysql.get_db().cursor()
-    SQL="select * from transactions"
+    SQL="select * from credit_cards"
     cursor.execute(SQL)
     data=cursor.fetchall()
     resp=jsonify(data)
