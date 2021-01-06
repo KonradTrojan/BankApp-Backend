@@ -11,7 +11,7 @@ def test():
     resp=jsonify(data)
     return resp
     
-    @testblueprint.route('/test1')
+@testblueprint.route('/test1')
 def test():
     SQL="select * from accounts"
     cursor.execute(SQL)
