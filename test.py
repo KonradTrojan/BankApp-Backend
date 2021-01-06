@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from project import cursor
 
 testblueprint = Blueprint('testblueprint', __name__)
@@ -8,4 +8,5 @@ def test():
     SQL="select * from accounts"
     cursor.execute(SQL)
     data=cursor.fetchone()
-    return data
+    resp=jsonify(data)
+    return resp
