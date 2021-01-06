@@ -1,6 +1,9 @@
 import os
 from flask import Flask
 from flaskext.mysql import MySQL
+
+mysql = MySQL()
+
 from project.test import testblueprint
 
 def create_app(test_config=None):
@@ -21,8 +24,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    #mysql
-    mysql = MySQL()
  
     # MySQL configurations
     app.config['MYSQL_DATABASE_USER'] = 'g18'
@@ -33,7 +34,6 @@ def create_app(test_config=None):
 
     #global mysql connection
     conn = mysql.connect()
-    global cursor 
     cursor = conn.cursor()
 
     # a simple page that says hello
