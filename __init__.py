@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flaskext.mysql import MySQL
-from test import testblueprint
+from project.test import testblueprint
 
 def create_app(test_config=None):
     # create and configure the app
