@@ -5,6 +5,7 @@ from flaskext.mysql import MySQL
 mysql = MySQL()
 
 from project.accounts import accountsblueprint
+from project.transactions import transactionsblueprint
 
 def create_app(test_config=None):
     # create and configure the app
