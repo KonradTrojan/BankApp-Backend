@@ -9,4 +9,4 @@ def test():
     cursor.execute(SQL)
     data=cursor.fetchone()
     resp=jsonify(data)
-    return "test123"
+    return resp
