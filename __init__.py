@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flask.ext.mysql import MySQL
+from flaskext.mysql import MySQL
 
 def create_app(test_config=None):
     # create and configure the app
