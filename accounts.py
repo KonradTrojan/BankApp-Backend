@@ -16,7 +16,7 @@ def accounts():
 def accountsForId():
     cursor = mysql.get_db().cursor()
 
-    SQL="select * from accounts where idAccounts="+id 
+    SQL="select * from accounts where idAccounts="+str(id) 
     cursor.execute(SQL)
     data=cursor.fetchall()
     resp=jsonify(data)
