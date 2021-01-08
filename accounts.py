@@ -21,3 +21,12 @@ def accountsForId(id):
     data=cursor.fetchall()
     resp=jsonify(data)
     return resp
+
+@testblueprint.route('/accounts1', methods=['GET'])
+def test1():
+    cursor = mysql.get_db().cursor()
+    SQL="select * from accounts"
+    cursor.execute(SQL)
+    data=cursor.fetchall()
+    resp=jsonify(data)
+    return resp
