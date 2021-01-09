@@ -20,19 +20,18 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        #TODO  dać jakieś porządne bindowanie do sql poniżej
-        sql = "select login from customers where login = " + str(username)
-        cursor.execute(sql)
-        data = cursor.fetchall()
-        passwordFromDB = data['password']
-        userID = data[1]
+        sql = """select login, password from customers where login like %s"""
+        cursor.execute(sql, [username])
+        rows = cursor.fetchall()
+        passwordFromDB = rows['password']
+        userID = rows[1]
 
     else:
         trojan = "trojan"
-        sql = """select password from customers where login like %s"""
+        sql = """select login, password from customers where login like %s"""
         cursor.execute(sql, [trojan])
         rows = cursor.fetchall()
-        tekscior = rows[0][0]
+        tekscior = rows[0][1]
         tekst = ''.join(str(rows))
         resp = jsonify(rows)
 
