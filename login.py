@@ -32,12 +32,11 @@ def login():
         sql = """select password from customers where login like %s"""
         cursor.execute(sql, [trojan])
         rows = cursor.fetchall()
-        for row in rows:
-            haslo = row['password']
+
 
         resp = jsonify(rows)
 
-        return resp
+        return 1
 
         '''
        
