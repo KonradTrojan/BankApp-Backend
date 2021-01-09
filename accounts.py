@@ -22,8 +22,8 @@ def accountsForId(id):
         balance = 0
     else:
         cursor = mysql.get_db().cursor()
-        SQL="select * from accounts where idAccounts= :id"
-        cursor.execute(SQL, id)
+        SQL="select * from accounts where idAccounts="+str(id)
+        cursor.execute(SQL)
         data=cursor.fetchall()
         resp=jsonify(data)
         return resp
