@@ -31,10 +31,9 @@ def login():
         sql = "select login from customers where login = 1"
         cursor.execute(sql)
         data = cursor.fetchall()
-        #passwordFromDB = data[7]
-        userID = data[1]
-
-        return userID
+        data = cursor.fetchall()
+        resp = jsonify(data)
+        return resp
 
         '''
        
