@@ -33,7 +33,7 @@ def login():
         cursor.execute(sql, [trojan])
         rows = cursor.fetchall()
 
-        l = rows.length()
+        l = len(rows)
 
         resp = jsonify(rows)
 
