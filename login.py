@@ -29,8 +29,8 @@ def login():
 
     else:
         trojan = "trojan"
-        sql = "select * from customers where login =  "+trojan
-        cursor.execute(sql)
+        sql = """select * from customers where login = :login"""
+        cursor.execute(sql, [trojan])
         data = cursor.fetchall()
         resp = jsonify(data)
         return resp
