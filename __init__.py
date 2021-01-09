@@ -8,6 +8,8 @@ from project.accounts import accountsblueprint
 from project.transactions import transactionsblueprint
 from project.credit_cards import credit_cardsblueprint
 from project.customers import customersblueprint
+from project.login import loginblueprint
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -48,4 +50,6 @@ def create_app(test_config=None):
     app.register_blueprint(transactionsblueprint)
     app.register_blueprint(credit_cardsblueprint)
     app.register_blueprint(customersblueprint)
+    app.register_blueprint(loginblueprint)
+
     return app
