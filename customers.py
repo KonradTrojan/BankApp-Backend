@@ -15,17 +15,15 @@ def customers():
     return resp
 
 
-@customersblueprint.route('/customers/<int:id>', methods=['GET', 'POST'])
+@customersblueprint.route('/customers/<int:id>', methods=['GET', 'POST', 'PUT'])
 def customersForId(id):
-    if request.method == 'POST' and 'name' in request.form:
+    if request.method == 'PUT':
         cursor = mysql.get_db().cursor()
-        name = request.form['name']
-        now = datetime.today()
-        balance = 0
+
 
     else:
         cursor = mysql.get_db().cursor()
-        SQL = "select * from customers where idCustomers= "+str(id)
+        SQL = """select * from customers where idCustomers= """+str(id)
         cursor.execute(SQL)
         data = cursor.fetchall()
         resp = jsonify(data)
