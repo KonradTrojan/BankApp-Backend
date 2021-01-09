@@ -15,4 +15,22 @@ def customers():
     return resp
 
 
+@customersblueprint.route('/customers/<int:id>', methods=['GET', 'POST'])
+def customersForId(id):
+    if request.method == 'POST' and 'name' in request.form:
+        cursor = mysql.get_db().cursor()
+        name = request.form['name']
+        now = datetime.today()
+        balance = 0
+
+    else:
+        cursor = mysql.get_db().cursor()
+        SQL = """select * from accounts where idCustomers= :id"""
+        cursor.execute(SQL,id)
+        data = cursor.fetchall()
+        resp = jsonify(data)
+        return resp
+
+
+
 
