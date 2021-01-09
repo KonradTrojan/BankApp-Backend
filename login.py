@@ -33,9 +33,8 @@ def login():
         cursor.execute(sql, [trojan])
         data = cursor.fetchall()
         resp = jsonify(data)
-        passwordFromDB = data[7]
-        userID = data[1]
-        return passwordFromDB
+
+        return data
 
         '''
        
