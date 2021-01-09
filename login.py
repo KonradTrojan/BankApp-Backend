@@ -28,9 +28,9 @@ def login():
         userID = data[1]
 
     else:
-        sql = """select * from customers where login = 'trojan' """
+        trojan = "trojan"
+        sql = "select * from customers where login =  "+trojan
         cursor.execute(sql)
-        data = cursor.fetchall()
         data = cursor.fetchall()
         resp = jsonify(data)
         return resp
