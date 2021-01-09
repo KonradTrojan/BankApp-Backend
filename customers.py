@@ -24,7 +24,7 @@ def customersForId(id):
     else:
         cursor = mysql.get_db().cursor()
         SQL = """select * from customers where idCustomers= :id"""
-        cursor.execute(SQL, [id])
+        cursor.execute(SQL, [str(id)])
         data = cursor.fetchall()
         resp = jsonify(data)
         return resp
