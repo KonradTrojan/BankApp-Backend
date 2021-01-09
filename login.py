@@ -23,30 +23,20 @@ def login():
         sql = """select login, password from customers where login like %s"""
         cursor.execute(sql, [username])
         rows = cursor.fetchall()
-        passwordFromDB = rows['password']
-        userID = rows[1]
+        userID = rows[0][0]
+        password_ = rows[0][1]
 
-    else:
-        trojan = "trojan"
-        sql = """select login, password from customers where login like %s"""
-        cursor.execute(sql, [trojan])
-        rows = cursor.fetchall()
-        tekscior = rows[0][0]
-        tekst = ''.join(str(rows))
-        resp = jsonify(rows)
-
-        return str(tekscior)
-
-        '''
-       
-        if passwordFromDB == password:
+        if password_ == password:
             session['userID'] = userID
             resp = jsonify(success=True)
             return resp
         else:
             resp = jsonify(success=False)
             return resp
-         '''
 
-    return True
+
+
+
+
+
 
