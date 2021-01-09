@@ -12,7 +12,7 @@ from . import mysql
 
 loginblueprint = Blueprint('loginblueprint',__name__)
 
-@loginblueprint.route("/login",method = ['POST','GET'])
+@loginblueprint.route("/login",methods = ['POST','GET'])
 def login():
     cursor = mysql.get_db().cursor()
     if request.method == 'POST':
