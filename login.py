@@ -28,7 +28,7 @@ def login():
         userID = data[1]
 
     else:
-        sql = "select login from customers where login = 1"
+        sql = "select login from customers where login = konrad"
         cursor.execute(sql)
         data = cursor.fetchall()
         data = cursor.fetchall()
