@@ -24,7 +24,7 @@ def login():
         sql = "select login from customers where login = " + str(username)
         cursor.execute(sql)
         data = cursor.fetchall()
-        passwordFromDB = data[7]
+        passwordFromDB = data['password']
         userID = data[1]
 
     else:
@@ -33,8 +33,8 @@ def login():
         cursor.execute(sql, [trojan])
         data = cursor.fetchall()
         resp = jsonify(data)
-        print(data)
-        return resp
+
+        return data['password']
 
         '''
        
