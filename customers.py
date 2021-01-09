@@ -26,7 +26,7 @@ def customersForId(id):
     else:
         cursor = mysql.get_db().cursor()
         SQL = "select * from accounts where idCustomers= "+str(id)
-        cursor.execute(SQL, id)
+        cursor.execute(SQL)
         data = cursor.fetchall()
         resp = jsonify(data)
         return resp
