@@ -31,10 +31,14 @@ def login():
         trojan = "trojan"
         sql = """select * from customers where login like %s"""
         cursor.execute(sql, [trojan])
-        data = cursor.fetchall()
-        resp = jsonify(data)
+        rows = cursor.fetchall()
+        i = 0
+        a = []
+        for row in rows:
+            a.append(row)
+        resp = jsonify(rows)
 
-        return data['password']
+        return a[1]
 
         '''
        
