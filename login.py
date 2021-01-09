@@ -31,10 +31,10 @@ def login():
         sql = "select login from customers where login = 1"
         cursor.execute(sql)
         data = cursor.fetchall()
-        passwordFromDB = data[7]
+        #passwordFromDB = data[7]
         userID = data[1]
 
-        return passwordFromDB
+        return userID
 
         '''
        
