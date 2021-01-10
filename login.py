@@ -24,7 +24,7 @@ def login1():
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
     resp = jsonify(data)
-    return str(data[0])
+    return str(data[1])
     userID = 1
     password_ = "123"
     password = password_
