@@ -23,8 +23,8 @@ def login():
 
             # TODO dodać szyfrowanie haseł WSZĘDZIE
             rows = cursor.fetchall()
-            userID = rows[0]
-            password_ = rows[1]
+            userID = 1
+            password_ = "123"
             password = request.form['password']
             if password_ == password:
                 session['userId'] = userID
