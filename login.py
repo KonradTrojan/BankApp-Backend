@@ -42,7 +42,9 @@ def login():
 @loginblueprint.route("/logout",methods = ['GET'])
 def logout():
     cursor = mysql.get_db().cursor()
-    if request.method == 'GET':
+    if request.method == 'POST':
+        return "post"
+    else:
         if 'userID' in session:
             session.pop("userID")
             return "wylogowano"
