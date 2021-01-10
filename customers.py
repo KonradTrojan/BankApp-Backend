@@ -24,9 +24,6 @@ def customersForId(id):
         sql = """delete from customers where id = %d """
         if cursor.execute(sql, [id]):
             return 200
-
-
-
     else:
 
         cursor = mysql.get_db().cursor()

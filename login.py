@@ -1,4 +1,4 @@
-from flask import Flask,redirect,render_template,request,session,url_for,Blueprint,jsonify,Response
+from flask import Flask, redirect, render_template, request,session,url_for,Blueprint,jsonify,Response
 
 
 from . import mysql
@@ -30,11 +30,11 @@ def login():
                 session['userId'] = userID
                 # TODO zdecydować się na jeden sposób przesyłania statusów
                 resp = jsonify(success=True)
-                return resp
+                return "udane logowanko"
             else:
                 # TODO zdecydować się na jeden sposób przesyłania statusów
                 resp = jsonify(success=False)
-                return resp
+                return "nieudane logowanko"
 
 @loginblueprint.route("/logout",methods = ['POST'])
 def logout():
