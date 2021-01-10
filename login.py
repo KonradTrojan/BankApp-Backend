@@ -41,26 +41,25 @@ def loginTest():
     cursor = mysql.get_db().cursor()
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
-    if not cursor.fetchone()[0]:
-        # TODO zdecydować się na jeden sposób przesyłania statusów
-        return "error 1"
+
 
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
-    userID = data[0]
-
-    password_ = data[1]
-    password =password_
-    if password_ == password:
-        session['userId'] = userID
-        # TODO zdecydować się na jeden sposób przesyłania statusów
-        resp = jsonify(success=True)
-        return "udane logowanko"
+    if data[0] is not None and data[1] is not None:
+        userID = data[0]
+        password_ = data[1]
+        password =password_
+        if password_ == password:
+            session['userId'] = userID
+            # TODO zdecydować się na jeden sposób przesyłania statusów
+            resp = jsonify(success=True)
+            return "udane logowanko"
+        else:
+            # TODO zdecydować się na jeden sposób przesyłania statusów
+            resp = jsonify(success=False)
+            return "nieudane logowanko"
     else:
-        # TODO zdecydować się na jeden sposób przesyłania statusów
-        resp = jsonify(success=False)
-        return "nieudane logowanko"
-
+        return "blad"
 @loginblueprint.route("/logout",methods = ['POST'])
 def logout():
     if request.method == 'POST':
