@@ -37,7 +37,7 @@ def loginTest():
 
     session.pop('userId', None)
 
-    username = "trojan"
+    username = "tn"
     cursor = mysql.get_db().cursor()
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
