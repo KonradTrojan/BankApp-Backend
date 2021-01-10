@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask,session, redirect, escape, url_for
 from flaskext.mysql import MySQL
 
 mysql = MySQL()
@@ -17,6 +17,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
+    app.secret_key='dfHBKsdjknsda9320ijod2f90cnwiodwdsa'
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)

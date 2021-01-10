@@ -15,31 +15,36 @@ loginblueprint = Blueprint('loginblueprint',__name__)
 @loginblueprint.route("/login",methods = ['POST','GET'])
 def login():
     cursor = mysql.get_db().cursor()
-    #if request.method == 'GET':
-    #session.pop('userId', None)
-    #username = request.form['username']
-    #password = request.form['password']
-    username = "trojan"
-    sql = """select idCustomers, password from customers where login like %s"""
-    cursor.execute(sql, [username])
-    rows = cursor.fetchone()
-    userID = rows[0]
-    password_ = rows[1]
+    if request.method == 'GET':
+        if request.form['action'] == "login":
 
-    session['userId'] = 12
-    resp = jsonify(rows)
-    return resp
+            session.pop('userId', None)
+            username = request.form['username']
+
+            sql = """select idCustomers, password from customers where login like %s"""
+            cursor.execute(sql, [username])
+            if not cursor.fetchone()[0]:
+                # TODO
+                return -1
+
+            rows = cursor.fetchone()
+            userID = rows[0]
+            password_ = rows[1]
+            password = request.form['password']
+            if password_ == password:
+                session['userId'] = userID
+                resp = jsonify(success=True)
+                return resp
+            else:
+                resp = jsonify(success=False)
+                return resp
 
 
-    '''
-        if password_ == password:
-            session['userId'] = userID
-            resp = jsonify(success=True)
-            return resp
-        else:
-            resp = jsonify(success=False)
-            return resp
-    '''
+
+
+
+
+
 
 
 
