@@ -5,26 +5,17 @@ from . import mysql
 
 loginblueprint = Blueprint('loginblueprint',__name__)
 @loginblueprint.route("/login",methods = ['POST','GET'])
-def login1():
-
-
+def login():
 
     session.pop('userId', None)
     username = request.form['username']
 
     cursor = mysql.get_db().cursor()
-    #username = "trojan"
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
-    #if not cursor.fetchone()[0]:
-    #    # TODO zdecydować się na jeden sposób przesyłania statusów
-
-    #    return "error 1"
 
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
-    resp = jsonify(data)
-    #return str(data[1])
     userID = data[0]
     password_ = data[1]
 
@@ -39,26 +30,26 @@ def login1():
 
         return "nieudane logowanko"
 
-@loginblueprint.route("/loginTYM",methods = ['POST'])
-def login():
+@loginblueprint.route("/login1",methods = ['POST'])
+def loginTest():
     if request.method == 'POST':
         if request.form['action'] == "login":
 
             session.pop('userId', None)
             username = request.form['username']
-
+            username = "trojan"
             cursor = mysql.get_db().cursor()
             sql = """select idCustomers, password from customers where login like %s"""
             cursor.execute(sql, [username])
             if not cursor.fetchone()[0]:
                 # TODO zdecydować się na jeden sposób przesyłania statusów
-
                 return "error 1"
 
             # TODO dodać szyfrowanie haseł WSZĘDZIE
-            rows = cursor.fetchall()
-            userID = 1
-            password_ = "123"
+            data = cursor.fetchone()
+            userID = data[0]
+            password_ = data[1]
+            return password_
             password = request.form['password']
             if password_ == password:
                 session['userId'] = userID
