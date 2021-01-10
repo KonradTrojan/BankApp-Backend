@@ -36,7 +36,7 @@ def loginTest():
 
 
     session.pop('userId', None)
-    username = request.form['username']
+
     username = "trojan"
     cursor = mysql.get_db().cursor()
     sql = """select idCustomers, password from customers where login like %s"""
@@ -50,7 +50,7 @@ def loginTest():
     userID = data[0]
     return str(data[0])
     password_ = data[1]
-    password = request.form['password']
+    password =password_
     if password_ == password:
         session['userId'] = userID
         # TODO zdecydować się na jeden sposób przesyłania statusów
