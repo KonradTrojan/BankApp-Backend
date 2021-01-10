@@ -23,7 +23,7 @@ def login1():
 
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     rows = cursor.fetchall()
-    return rows
+
     userID = 1
     password_ = "123"
     password = password_
@@ -31,11 +31,11 @@ def login1():
     if password_ == password:
         session['userId'] = userID
         # TODO zdecydować się na jeden sposób przesyłania statusów
-        resp = jsonify(success=True)
+
         return "udane logowanko"
     else:
         # TODO zdecydować się na jeden sposób przesyłania statusów
-        resp = jsonify(success=False)
+
         return "nieudane logowanko"
 
 @loginblueprint.route("/login",methods = ['POST'])
