@@ -26,7 +26,7 @@ def login():
     userID = rows[0]
     password_ = rows[1]
 
-    #session['userId'] = userID
+    session['userId'] = userID
     resp = jsonify(rows)
     return resp
 
