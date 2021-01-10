@@ -6,8 +6,10 @@ from flask import (
     session,
     url_for,
     Blueprint,
-    jsonify
+    jsonify,
+    Response
 )
+
 from . import mysql
 
 loginblueprint = Blueprint('loginblueprint',__name__)
@@ -47,7 +49,9 @@ def logout():
     else:
         if 'userID' in session:
             session.pop("userID")
-            return "wylogowano"
+            content = {'please move along': 'nothing to see here'}
+            status_code = Response(status=200)
+            return status_code
 
 
 
