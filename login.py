@@ -5,7 +5,7 @@ from . import mysql
 
 loginblueprint = Blueprint('loginblueprint',__name__)
 
-@loginblueprint.route("/login",methods = ['POST'])
+@loginblueprint.route("/login",methods = ['POST','GET'])
 def login():
     if request.method == 'POST' or request.method=='GET':
         if request.form['action'] == "login":
