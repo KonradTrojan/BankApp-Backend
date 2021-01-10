@@ -48,8 +48,8 @@ def loginTest():
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
     userID = data[0]
+    return str(data[0])
     password_ = data[1]
-    return password_
     password = request.form['password']
     if password_ == password:
         session['userId'] = userID
