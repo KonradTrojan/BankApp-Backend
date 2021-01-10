@@ -14,11 +14,6 @@ def customers():
     resp = jsonify(data)
     return resp
 
-@customersblueprint.route('/customers1/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-def customersForId1(id):
-    session['userID'] = id
-    return "ustawiono sesje"
-
 @customersblueprint.route('/customers/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def customersForId(id):
     if request.method == 'PUT':
@@ -33,12 +28,11 @@ def customersForId(id):
 
 
     else:
-        if 'userID' in session:
-            cursor = mysql.get_db().cursor()
 
-            cursor.execute('select * from customers where idCustomers= ' + str(id))
-            data = cursor.fetchall()
-            resp = jsonify(data)
-            return resp
-        else:
-            return "brak dostepu"
+        cursor = mysql.get_db().cursor()
+
+        cursor.execute('select * from customers where idCustomers= ' + str(id))
+        data = cursor.fetchall()
+        resp = jsonify(data)
+        return resp
+
