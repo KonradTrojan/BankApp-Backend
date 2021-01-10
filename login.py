@@ -23,12 +23,12 @@ def login():
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
     rows = cursor.fetchone()
-    userID = rows[0]
-    password_ = rows[1]
+    #userID = rows[0]
+    #password_ = rows[1]
 
-    session['userId'] = userID
-    resp = jsonify(success=True)
-    return userID
+    #session['userId'] = userID
+    resp = jsonify(rows)
+    return resp
 
 
     '''
