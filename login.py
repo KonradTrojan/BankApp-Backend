@@ -30,7 +30,7 @@ def login():
 
             return "nieudane logowanko"
 
-@loginblueprint.route("/login1",methods = ['POST'])
+@loginblueprint.route("/login1",methods = ['POST','GET'])
 def loginTest():
 
 
