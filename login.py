@@ -16,15 +16,15 @@ def login():
             cursor = mysql.get_db().cursor()
             sql = """select idCustomers, password from customers where login like %s"""
             cursor.execute(sql, [username])
-            if not cursor.fetchone()[0]:
+            if not cursor.fetchone()[0][0]:
                 # TODO zdecydować się na jeden sposób przesyłania statusów
-                resp = jsonify(success=False)
-                return resp
+
+                return "error 1"
 
             # TODO dodać szyfrowanie haseł WSZĘDZIE
             rows = cursor.fetchall()
-            userID = rows[0][0]
-            password_ = rows[0][1]
+            userID = rows[0]
+            password_ = rows[1]
             password = request.form['password']
             if password_ == password:
                 session['userId'] = userID
