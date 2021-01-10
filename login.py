@@ -41,9 +41,9 @@ def loginTest():
     cursor = mysql.get_db().cursor()
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
-    if not cursor.fetchone()[0]:
+   # if not cursor.fetchone()[0]:
         # TODO zdecydować się na jeden sposób przesyłania statusów
-        return "error 1"
+    #    return "error 1"
 
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
