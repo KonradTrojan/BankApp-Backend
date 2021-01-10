@@ -12,10 +12,10 @@ from . import mysql
 
 loginblueprint = Blueprint('loginblueprint',__name__)
 
-@loginblueprint.route("/login",methods = ['POST','GET'])
+@loginblueprint.route("/login",methods = ['POST'])
 def login():
     cursor = mysql.get_db().cursor()
-    if request.method == 'GET':
+    if request.method == 'POST':
         if request.form['action'] == "login":
 
             session.pop('userId', None)
