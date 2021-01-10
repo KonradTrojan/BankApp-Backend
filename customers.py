@@ -15,7 +15,7 @@ def customers():
     return resp
 
 @customersblueprint.route('/customers1/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-def customersForId(id):
+def customersForId1(id):
     session['userID'] = id
     return "ustawiono sesje"
 
