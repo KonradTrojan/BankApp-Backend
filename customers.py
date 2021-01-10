@@ -36,3 +36,5 @@ def customersForId(id):
             data = cursor.fetchall()
             resp = jsonify(data)
             return resp
+        else:
+            return "brak dostepu"
