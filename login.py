@@ -14,13 +14,13 @@ loginblueprint = Blueprint('loginblueprint',__name__)
 
 @loginblueprint.route("/login",methods = ['POST'])
 def login():
-    cursor = mysql.get_db().cursor()
     if request.method == 'POST':
         if request.form['action'] == "login":
 
             session.pop('userId', None)
             username = request.form['username']
 
+            cursor = mysql.get_db().cursor()
             sql = """select idCustomers, password from customers where login like %s"""
             cursor.execute(sql, [username])
             if not cursor.fetchone()[0]:
@@ -39,7 +39,13 @@ def login():
                 resp = jsonify(success=False)
                 return resp
 
-
+@loginblueprint.route("/logout",methods = ['POST'])
+def logout():
+    cursor = mysql.get_db().cursor()
+    if request.method == 'POST':
+        if 'userID' in session:
+            session.pop("userID")
+            return "wylogowano"
 
 
 
