@@ -6,36 +6,37 @@ from . import mysql
 loginblueprint = Blueprint('loginblueprint',__name__)
 @loginblueprint.route("/login1",methods = ['POST','GET'])
 def login1():
-    if request.method=='GET':
 
 
-        session.pop('userId', None)
-        username = request.form['username']
 
-        cursor = mysql.get_db().cursor()
-        username = "trojan"
-        sql = """select idCustomers, password from customers where login like %s"""
-        cursor.execute(sql, [username])
-        #if not cursor.fetchone()[0]:
-        #    # TODO zdecydować się na jeden sposób przesyłania statusów
+    session.pop('userId', None)
+    #username = request.form['username']
 
-        #    return "error 1"
+    cursor = mysql.get_db().cursor()
+    username = "trojan"
+    sql = """select idCustomers, password from customers where login like %s"""
+    cursor.execute(sql, [username])
+    #if not cursor.fetchone()[0]:
+    #    # TODO zdecydować się na jeden sposób przesyłania statusów
 
-        # TODO dodać szyfrowanie haseł WSZĘDZIE
-        rows = cursor.fetchall()
-        return rows
-        userID = 1
-        password_ = "123"
-        password = request.form['password']
-        if password_ == password:
-            session['userId'] = userID
-            # TODO zdecydować się na jeden sposób przesyłania statusów
-            resp = jsonify(success=True)
-            return "udane logowanko"
-        else:
-            # TODO zdecydować się na jeden sposób przesyłania statusów
-            resp = jsonify(success=False)
-            return "nieudane logowanko"
+    #    return "error 1"
+
+    # TODO dodać szyfrowanie haseł WSZĘDZIE
+    rows = cursor.fetchall()
+    return rows
+    userID = 1
+    password_ = "123"
+    password = password_
+    #password = request.form['password']
+    if password_ == password:
+        session['userId'] = userID
+        # TODO zdecydować się na jeden sposób przesyłania statusów
+        resp = jsonify(success=True)
+        return "udane logowanko"
+    else:
+        # TODO zdecydować się na jeden sposób przesyłania statusów
+        resp = jsonify(success=False)
+        return "nieudane logowanko"
 
 @loginblueprint.route("/login",methods = ['POST'])
 def login():
