@@ -4,16 +4,16 @@ from flask import Flask, redirect, render_template, request,session,url_for,Blue
 from . import mysql
 
 loginblueprint = Blueprint('loginblueprint',__name__)
-@loginblueprint.route("/login1",methods = ['POST','GET'])
+@loginblueprint.route("/login",methods = ['POST','GET'])
 def login1():
 
 
 
     session.pop('userId', None)
-    #username = request.form['username']
+    username = request.form['username']
 
     cursor = mysql.get_db().cursor()
-    username = "trojan"
+    #username = "trojan"
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
     #if not cursor.fetchone()[0]:
@@ -24,11 +24,11 @@ def login1():
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
     resp = jsonify(data)
-    return str(data[1])
-    userID = 1
-    password_ = "123"
-    password = password_
-    #password = request.form['password']
+    #return str(data[1])
+    userID = data[0]
+    password_ = data[1]
+
+    password = request.form['password']
     if password_ == password:
         session['userId'] = userID
         # TODO zdecydować się na jeden sposób przesyłania statusów
@@ -39,7 +39,7 @@ def login1():
 
         return "nieudane logowanko"
 
-@loginblueprint.route("/login",methods = ['POST'])
+@loginblueprint.route("/loginTYM",methods = ['POST'])
 def login():
     if request.method == 'POST':
         if request.form['action'] == "login":
