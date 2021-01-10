@@ -39,10 +39,10 @@ def login():
                 resp = jsonify(success=False)
                 return resp
 
-@loginblueprint.route("/logout",methods = ['POST'])
+@loginblueprint.route("/logout",methods = ['GET'])
 def logout():
     cursor = mysql.get_db().cursor()
-    if request.method == 'POST':
+    if request.method == 'GET':
         if 'userID' in session:
             session.pop("userID")
             return "wylogowano"
