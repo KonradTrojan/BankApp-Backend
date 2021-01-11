@@ -29,7 +29,7 @@ def login():
             # TODO zdecydować się na jeden sposób przesyłania statusów
 
             return "nieudane logowanko"
-
+'''
 @loginblueprint.route("/login1",methods = ['POST','GET'])
 def loginTest():
 
@@ -37,7 +37,7 @@ def loginTest():
 
     session.pop('userId', None)
 
-    username = "tn"
+    username = "trojan"
     cursor = mysql.get_db().cursor()
     sql = """select idCustomers, password from customers where login like %s"""
     cursor.execute(sql, [username])
@@ -45,7 +45,7 @@ def loginTest():
 
     # TODO dodać szyfrowanie haseł WSZĘDZIE
     data = cursor.fetchone()
-    if data[0] is not None and data[1] is not None:
+    if data[0]  and data[1] is not None:
         userID = data[0]
         password_ = data[1]
         password =password_
@@ -60,7 +60,7 @@ def loginTest():
             return "nieudane logowanko"
     else:
         return "blad"
-@loginblueprint.route("/logout",methods = ['POST'])
+@loginblueprint.route("/logout", methods = ['POST'])
 def logout():
     if request.method == 'POST':
         if 'userID' in session:
@@ -69,7 +69,7 @@ def logout():
             # TODO zdecydować się na jeden sposób przesyłania statusów
             statusCode = Response(status=200)
             return statusCode
-
+'''
 
 
 
