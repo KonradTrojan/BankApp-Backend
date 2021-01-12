@@ -58,11 +58,10 @@ def accountsForIdTest(id):
     sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
     cursor.execute(sql, [session['userId']])
     data = cursor.fetchone()
-
-    resp = jsonify(data)
-    return resp
     idAccounts = data[0]
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
+    cursor.execute(sql, [idAccounts])
+    sql = """DELETE FROM owners WHERE idAccounts = '%s'"""
     cursor.execute(sql, [idAccounts])
     cursor.close()
     return "usunieto"
