@@ -53,24 +53,22 @@ def accountsForIdTest(id):
     '''
 
     #if request.method == 'DELETE':
-    cursor = mysql.get_db().cursor()
+    conn = mysql.connect()
+    cursor = conn.cursor()
     session['userId'] = 1
     sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
     cursor.execute(sql, [session['userId']])
     data = cursor.fetchone()
     idAccounts = data[0]
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    sql = '''INSERT INTO owners (idAccounts, idCustomers) VALUES ('%s','%s')'''
-    cursor.execute(sql, [3,3])
-    conn.commit()
 
 
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
-    cursor.execute(sql, 1)
+    cursor.execute(sql, 2)
     sql = """DELETE FROM owners WHERE idAccounts = '%s'"""
-    cursor.execute(sql, 1)
+    cursor.execute(sql, 2)
+    conn.commit()
     cursor.close()
+    conn.close()
     return "usunieto"
     '''
     else:
