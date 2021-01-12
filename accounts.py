@@ -60,9 +60,9 @@ def accountsForIdTest(id):
     data = cursor.fetchone()
     idAccounts = data[0]
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
-    cursor.execute(sql, [idAccounts])
+    cursor.execute(sql, 1)
     sql = """DELETE FROM owners WHERE idAccounts = '%s'"""
-    cursor.execute(sql, [idAccounts])
+    cursor.execute(sql, 1)
     cursor.close()
     return "usunieto"
     '''
