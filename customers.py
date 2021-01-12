@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, json
 from . import mysql
 from datetime import datetime
 
@@ -14,21 +14,17 @@ def customers():
     resp = jsonify(data)
     return resp
 
-@customersblueprint.route('/customers/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@customersblueprint.route('/customers/<int:id>', methods=['GET', 'DELETE'])
 def customersForId(id):
-    if request.method == 'PUT':
-        cursor = mysql.get_db().cursor()
-
-    elif request.method == 'DELETE':
-        cursor = mysql.get_db().cursor()
-        sql = """delete from customers where id = %d """
-        if cursor.execute(sql, [id]):
-            return 200
+    conn = mysql.connect()
+    if request.method == 'DELETE':
+        cursor = conn.cursor()
+        sql = """delete from customers where id = '%s' """
+        cursor.execute(sql, [id])
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     else:
-
-
-
-        cursor.execute('select * from customers where idCustomers= ' + str(id))
+        cursor = conn.cursor()
+        cursor.execute('''select * from customers where idCustomers= '%s' ''', [id])
         data = cursor.fetchall()
         resp = jsonify(data)
         return resp
