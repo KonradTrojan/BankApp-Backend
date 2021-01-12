@@ -21,15 +21,15 @@ def accountsForId(id):
         name = request.form['name']
         now = datetime.today()
         balance = 0
-        sql = """INSERT INTO accounts (balance, dataOpened, name) VALUES (:balance, :dataOPened, :name)"""
+        sql = """INSERT INTO accounts (balance, dataOpened, name) VALUES ('%s', '%s', '%s')"""
         cursor.execute(sql, [balance, now, name])
     if request.method == 'DELETE':
         cursor = mysql.get_db().cursor()
-        sql = """SELECT idAccounts FROM owners WHERE idCustomers = %d"""
+        sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
         cursor.execute(sql, [session['userId']])
         data = cursor.fetchone()
         idAccounts = data[0]
-        sql = """DELETE FROM accounts WHERE idAccounts = %d"""
+        sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
         cursor.execute(sql, [idAccounts])
         cursor.close()
     else:
@@ -55,11 +55,11 @@ def accountsForIdTest(id):
     #if request.method == 'DELETE':
     cursor = mysql.get_db().cursor()
     session['userId'] = 3
-    sql = """SELECT idAccounts FROM owners WHERE idCustomers = %d"""
+    sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
     cursor.execute(sql, [session['userId']])
     data = cursor.fetchone()
     idAccounts = data[0]
-    sql = """DELETE FROM accounts WHERE idAccounts = %d"""
+    sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
     cursor.execute(sql, [idAccounts])
     cursor.close()
     return "usunieto"
