@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session, json
+from flask import Blueprint, jsonify, request, session
 from . import mysql
 from datetime import datetime
 
@@ -16,28 +16,35 @@ def accounts():
 
 @accountsblueprint.route('/accounts/<int:id>', methods=['GET', 'POST', 'DELETE'])
 def accountsForId(id):
+    conn = mysql.connect()
     if request.method == 'POST' and 'name' in request.form:
-        cursor = mysql.get_db().cursor()
         name = request.form['name']
         now = datetime.today()
         balance = 0
+        cursor = conn.cursor()
         sql = """INSERT INTO accounts (balance, dataOpened, name) VALUES ('%s', '%s', '%s')"""
         cursor.execute(sql, [balance, now, name])
+        conn.commit()
+        cursor.close()
+        conn.close()
     if request.method == 'DELETE':
-        cursor = mysql.get_db().cursor()
+        cursor = conn.cursor()
         sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
         cursor.execute(sql, [session['userId']])
         data = cursor.fetchone()
         idAccounts = data[0]
         sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
         cursor.execute(sql, [idAccounts])
+        conn.commit()
         cursor.close()
+        conn.close()
     else:
         cursor = mysql.get_db().cursor()
         sql = """select * from accounts where idAccounts= '%s'"""
         cursor.execute(sql, id)
         data = cursor.fetchall()
         resp = jsonify(data)
+        conn.close()
         return resp
 
 @accountsblueprint.route('/accountsTest/<int:id>', methods=['GET', 'POST', 'DELETE'])
@@ -50,27 +57,29 @@ def accountsForIdTest(id):
         balance = 0
         sql = """INSERT INTO accounts (balance, dataOpened, name) VALUES (:balance, :dataOPened, :name)"""
         cursor.execute(sql, [balance, now, name])
-    '''
+
 
     #if request.method == 'DELETE':
-    conn = mysql.connect()
-    cursor = conn.cursor()
+    cursor = mysql.get_db().cursor()
     session['userId'] = 1
     sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
     cursor.execute(sql, [session['userId']])
     data = cursor.fetchone()
     idAccounts = data[0]
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = INSERT INTO owners (idAccounts, idCustomers) VALUES ('%s','%s')
+    cursor.execute(sql, [3,3])
+    conn.commit()
 
 
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
-    cursor.execute(sql, 2)
+    cursor.execute(sql, 1)
     sql = """DELETE FROM owners WHERE idAccounts = '%s'"""
-    cursor.execute(sql, 2)
-    conn.commit()
+    cursor.execute(sql, 1)
     cursor.close()
-    conn.close()
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
-    '''
+    return "usunieto"
+
     else:
         cursor = mysql.get_db().cursor()
         sql = """select * from accounts where idAccounts= :idAcc"""
