@@ -1,10 +1,9 @@
 from flask import Flask, redirect, render_template, request,session,url_for,Blueprint,jsonify,Response,json
-'''
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
-'''
+
 from . import mysql
 
 loginblueprint = Blueprint('loginblueprint', __name__)
@@ -43,18 +42,18 @@ def loginJWT():
         return jsonify({"msg": "Missing password parameter"}), 400
 
     cursor = mysql.get_db().cursor()
-    sql = """select idCustomers, password from customers where login like %s"""
+    sql = """select password from customers where login like %s"""
     cursor.execute(sql, [username])
 
     data = cursor.fetchone()
-    userId = data[0]
-    password_ = data[1]
+
+    password_ = data[0]
 
     if password != password_:
         return jsonify({"msg": "Bad username or password"}), 401
 
     # Identity can be any data that is json serializable
-    # access_token = create_access_token(identity=username)
+    access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token), 200
 
 
