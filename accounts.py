@@ -61,8 +61,8 @@ def accountsForIdTest(id):
     idAccounts = data[0]
 
     sql = '''INSERT INTO owners (idAccounts, idCustomers) VALUES ('%s','%s')'''
-    mysql.connection.commit()
     cursor.execute(sql, [3,3])
+    mysql.commit()
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
     cursor.execute(sql, 1)
     sql = """DELETE FROM owners WHERE idAccounts = '%s'"""
