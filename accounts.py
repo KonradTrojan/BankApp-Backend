@@ -60,7 +60,7 @@ def accountsForIdTest(id):
     data = cursor.fetchone()
     idAccounts = data[0]
     sql = """INSERT INTO `owners`(`idAccounts`, `idCustomers`) VALUES ('%s','%s')"""
-    cursor.execute(sql, 3,3)
+    cursor.execute(sql, [3,3])
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
     cursor.execute(sql, 1)
     sql = """DELETE FROM owners WHERE idAccounts = '%s'"""
