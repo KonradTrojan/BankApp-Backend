@@ -54,7 +54,7 @@ def accountsForIdTest(id):
 
     #if request.method == 'DELETE':
     cursor = mysql.get_db().cursor()
-    session['userId'] = 3
+    session['userId'] = 1
     sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
     cursor.execute(sql, [session['userId']])
     data = cursor.fetchone()
