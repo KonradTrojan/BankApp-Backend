@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, json
 from . import mysql
 from datetime import datetime
 
@@ -69,7 +69,7 @@ def accountsForIdTest(id):
     conn.commit()
     cursor.close()
     conn.close()
-    return "usunieto"
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     '''
     else:
         cursor = mysql.get_db().cursor()
