@@ -59,6 +59,7 @@ def accountsForIdTest(id):
     cursor.execute(sql, [session['userId']])
     data = cursor.fetchone()
     idAccounts = data[0]
+    cursor = mysql.get_db().cursor()
     sql = '''INSERT INTO owners (idAccounts, idCustomers) VALUES ('%s','%s')'''
     cursor.execute(sql, [3,3])
     sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
