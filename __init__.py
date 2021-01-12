@@ -9,6 +9,10 @@ from project.transactions import transactionsblueprint
 from project.credit_cards import credit_cardsblueprint
 from project.customers import customersblueprint
 from project.login import loginblueprint
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 
 def create_app(test_config=None):
@@ -17,6 +21,11 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
+    # obsługa jwt
+    app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
+    jwt = JWTManager(app)
+
+
     app.secret_key='dfHBKsdjknsda9320ijod2f90cnwiodwdsa'
     if test_config is None:
         # load the instance config, if it exists, when not testing
