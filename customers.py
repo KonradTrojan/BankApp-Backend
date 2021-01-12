@@ -26,7 +26,7 @@ def customersForId(id):
             return 200
     else:
 
-        cursor = mysql.get_db().cursor()
+
 
         cursor.execute('select * from customers where idCustomers= ' + str(id))
         data = cursor.fetchall()
