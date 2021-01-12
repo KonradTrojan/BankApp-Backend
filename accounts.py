@@ -34,8 +34,8 @@ def accountsForId(id):
         cursor.close()
     else:
         cursor = mysql.get_db().cursor()
-        sql = """select * from accounts where idAccounts= '%d'"""
-        cursor.execute("select * from accounts where idAccounts= '%s'", id)
+        sql = """select * from accounts where idAccounts= '%s'"""
+        cursor.execute(sql, id)
         data = cursor.fetchall()
         resp = jsonify(data)
         return resp
