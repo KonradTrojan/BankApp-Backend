@@ -17,7 +17,7 @@ def login():
         sql = """select idCustomers, password from customers where login like %s"""
         cursor.execute(sql, [username])
 
-        # TODO dodać szyfrowanie hashowanie WSZĘDZIE
+        # TODO dodać hashowanie WSZĘDZIE
         data = cursor.fetchone()
         userId = data[0]
         password_ = data[1]
@@ -58,5 +58,8 @@ def loginJWT():
 
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> refs/remotes/origin/main
