@@ -8,7 +8,7 @@ loginblueprint = Blueprint('loginblueprint', __name__)
 def login():
     if request.method == 'POST':
         session.pop('userId', None)
-        username = request.form['username']
+        username = request.json['username']
 
         cursor = mysql.get_db().cursor()
         sql = """select idCustomers, password from customers where login like %s"""
@@ -19,12 +19,12 @@ def login():
         userID = data[0]
         password_ = data[1]
 
-        password = request.form['password']
+        password = request.json['password']
         if password_ == password:
             session['userId'] = userID
             # TODO zdecydować się na jeden sposób przesyłania statusów
 
-            return "udane logowanko"
+            return jsonify(token='test')
         else:
             # TODO zdecydować się na jeden sposób przesyłania statusów
 
