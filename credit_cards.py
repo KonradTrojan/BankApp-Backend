@@ -8,7 +8,7 @@ def credit_cards():
     cursor = mysql.get_db().cursor()
     SQL="select * from credit_cards"
     cursor.execute(SQL)
-    data=cursor.fetchall()
-    resp=jsonify(data)
+    data = cursor.fetchall()
+    resp = jsonify(data)
     return resp
     
