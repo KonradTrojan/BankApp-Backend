@@ -25,8 +25,8 @@ def create_app(test_config=None):
     # app.secret_key = "23edbcAN1fdsanmDAS32r0wCsdodjfsiajdsdfajcifdjoadsfp"
     app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
 
-    from jwtHandler import jwt
-    jwt.init_app(app)
+
+    jwt = JWTManager(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
