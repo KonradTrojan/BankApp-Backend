@@ -1,11 +1,11 @@
-import jwt
 from flask import Blueprint, jsonify, request, session, json
 from . import mysql
-from datetime import datetime
+from flask import Flask, jsonify, request
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
 )
+from jwtHandler import jwt
 customersblueprint = Blueprint('customersblueprint', __name__)
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
@@ -39,7 +39,7 @@ def customers():
     return resp
 
 @customersblueprint.route('/customer/', methods=['GET', 'DELETE'])
-
+@jwt_required
 def customersForId(id):
     conn = mysql.connect()
     if request.method == 'DELETE':
