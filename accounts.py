@@ -16,10 +16,11 @@ def accounts():
 @accountsblueprint.route('/accounts/<int:id>', methods=['GET', 'POST', 'DELETE'])
 def accountsForId(id):
     conn = mysql.connect()
-    if request.method == 'POST' and 'name' in request.form:
-        name = request.form['name']
+    if request.method == 'POST' and 'balance' in request.json:
+        # name = request.form['name']
+        name = "xxxxxxxxxxxx"
         now = datetime.today()
-        balance = 0
+        balance = request.json['balance']
         cursor = conn.cursor()
         sql = """INSERT INTO accounts (balance, dataOpened, name) VALUES ('%s', '%s', '%s')"""
         cursor.execute(sql, [balance, now, name])
