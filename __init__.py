@@ -1,19 +1,15 @@
 import os
 from flask import Flask,session, redirect, escape, url_for
 from flaskext.mysql import MySQL
-
+from jwtHandler import jwt
 mysql = MySQL()
 
-from project.accounts import accountsblueprint
-from project.transactions import transactionsblueprint
-from project.credit_cards import credit_cardsblueprint
-from project.customers import customersblueprint
-from project.login import loginblueprint
+
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
-from jwtHandler import jwt
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -26,7 +22,11 @@ def create_app(test_config=None):
     app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
 
     jwt.init_app(app)
-
+    from project.accounts import accountsblueprint
+    from project.transactions import transactionsblueprint
+    from project.credit_cards import credit_cardsblueprint
+    from project.customers import customersblueprint
+    from project.login import loginblueprint
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
