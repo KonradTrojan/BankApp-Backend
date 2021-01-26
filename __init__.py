@@ -13,7 +13,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
-
+from jwtHandler import jwt
 
 def create_app(test_config=None):
     # create and configure the app
@@ -22,11 +22,11 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
     # obsługa jwt
+    # app.secret_key = "23edbcAN1fdsanmDAS32r0wCsdodjfsiajdsdfajcifdjoadsfp"
     app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
-    jwt = JWTManager(app)
 
+    jwt.init_app(app)
 
-    app.secret_key='dfHBKsdjknsda9320ijod2f90cnwiodwdsa'
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
