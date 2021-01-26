@@ -5,9 +5,9 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
 )
-from jwtHandler import jwt
+import jwtHandler
 customersblueprint = Blueprint('customersblueprint', __name__)
-@jwt.user_claims_loader
+@jwtHandler.jwt.user_claims_loader
 def add_claims_to_access_token(identity):
     conn = mysql.connect()
     cursor = conn.cursor()
