@@ -1,9 +1,33 @@
+import jwt
 from flask import Blueprint, jsonify, request, session, json
 from . import mysql
 from datetime import datetime
-
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_claims
+)
 customersblueprint = Blueprint('customersblueprint', __name__)
-
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute('''select idCustomer, firstName, lastName, email, phone, dateBecomeCustomer from customers where idCustomers= '%s' ''', [identity])
+    data = cursor.fetchone()
+    idCustomer = data[0]
+    firstName = data[1]
+    lastName = data[2]
+    email = data[3]
+    phone = data[4]
+    dataBecomeCustomer = data[5]
+    return {
+        'login': identity,
+        'idCustomer': idCustomer,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'phone': phone,
+        'dataBecomeCustomer': dataBecomeCustomer
+    }
 
 @customersblueprint.route('/customers')
 def customers():
@@ -14,7 +38,8 @@ def customers():
     resp = jsonify(data)
     return resp
 
-@customersblueprint.route('/customers/<int:id>', methods=['GET', 'DELETE'])
+@customersblueprint.route('/customer/', methods=['GET', 'DELETE'])
+
 def customersForId(id):
     conn = mysql.connect()
     if request.method == 'DELETE':
@@ -23,9 +48,6 @@ def customersForId(id):
         cursor.execute(sql, [id])
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     else:
-        cursor = conn.cursor()
-        cursor.execute('''select * from customers where idCustomers= '%s' ''', [id])
-        data = cursor.fetchall()
-        resp = jsonify(data)
-        return resp
+        claims = get_jwt_claims()
+        return claims, 200
 
