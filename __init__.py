@@ -1,7 +1,6 @@
 import os
-from flask import Flask,session, redirect, escape, url_for
+from flask import Flask
 from project.mysqlHandler import mysql
-
 from project.accounts import accountsblueprint
 from project.transactions import transactionsblueprint
 from project.credit_cards import credit_cardsblueprint
