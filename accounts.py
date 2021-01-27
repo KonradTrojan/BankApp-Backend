@@ -1,10 +1,12 @@
 from flask import Blueprint, jsonify, request, session, json
 from . import mysql
 from datetime import datetime
+from project.jwtHandler import jwt, blacklist
 
 accountsblueprint = Blueprint('accountsblueprint', __name__)
 
 @accountsblueprint.route('/accounts')
+@jwt_required
 def accounts():
     cursor = mysql.get_db().cursor()
     sql = """select * from accounts"""
@@ -12,6 +14,7 @@ def accounts():
     data = cursor.fetchall()
     resp = jsonify(data)
     return resp
+
 
 @accountsblueprint.route('/accounts/<int:id>', methods=['GET', 'POST', 'DELETE'])
 def accountsForId(id):
@@ -48,3 +51,25 @@ def accountsForId(id):
         resp = jsonify(data)
         conn.close()
         return resp
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select idAccounts from owners where idCustomers= %s """
+    cursor.execute(sql, [identity])
+    data = cursor.fetchone()
+    return data
+    userData = []
+    for row in data:
+        userData.append(row)
+
+    return {
+        'idCustomer': identity,
+        'login': userData[0],
+        'firstName': userData[1],
+        'lastName': userData[2],
+        'email': userData[3],
+        'phone': userData[4],
+        'dataBecomeCustomer': userData[5]
+    }
