@@ -4,7 +4,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
 
-@credit_cardsblueprint.route('/credit_cards')
+
+@credit_cardsblueprint.route('/credit_cards', methods=['GET'])
 @jwt_required
 def credit_cards():
     identity = get_jwt_identity()
@@ -36,3 +37,26 @@ def credit_cards():
         })
     return jsonify(myJson)
 
+@credit_cardsblueprint.route('/credit_cards/<int:id>', methods=['GET'])
+@jwt_required
+def creditCardsOfAccount(idAccount):
+    myJson = []
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    idCards = getIdsCreditCardsOfAccount(idAccount)
+    for id in idCards:
+        sql = """select idAccounts, maximumLimit, expiryDate from credit_cards where idCreditCards= %s """
+        cursor.execute(sql, [id])
+        data = cursor.fetchone()
+
+        userData = []
+        for row in data:
+            userData.append(row)
+
+        myJson.append({
+            'idCreditCards': id,
+            'idAccounts': userData[0],
+            'maximumLimit': userData[1],
+            'expiryDate': userData[2]
+        })
+    return jsonify(myJson)
