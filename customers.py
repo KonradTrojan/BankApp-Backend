@@ -5,10 +5,10 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
 )
-#import jwtHandler
+from jwtHandler import jwt
 customersblueprint = Blueprint('customersblueprint', __name__)
-'''
-@jwtHandler.jwt.user_claims_loader
+
+@jwt.user_claims_loader
 def add_claims_to_access_token(identity):
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -29,7 +29,7 @@ def add_claims_to_access_token(identity):
         'phone': phone,
         'dataBecomeCustomer': dataBecomeCustomer
     }
-'''
+
 @customersblueprint.route('/customers')
 def customers():
     cursor = mysql.get_db().cursor()
