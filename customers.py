@@ -39,7 +39,7 @@ def customers():
     data = cursor.fetchall()
     resp = jsonify(data)
     return resp
-'''
+
 @customersblueprint.route('/customer/', methods=['GET', 'DELETE'])
 @jwt_required
 def customersForId(id):
@@ -53,4 +53,4 @@ def customersForId(id):
         claims = get_jwt_claims()
         return claims, 200
 
-'''
+
