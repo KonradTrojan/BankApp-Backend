@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session, json
 from . import mysql
 from datetime import datetime
 from project.jwtHandler import jwt, blacklist
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required, get_jwt_claims,get_jwt_identity
 accountsblueprint = Blueprint('accountsblueprint', __name__)
 
 
@@ -55,7 +55,8 @@ def accountsForId(id):
 
 @accountsblueprint.route('/accounts1')
 @jwt_required
-def accountsOfCustomer(identity):
+def accountsOfCustomer():
+    identity = get_jwt_identity()
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idAccounts from owners where idCustomers= %s """
