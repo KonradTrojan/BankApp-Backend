@@ -22,8 +22,8 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
-
-    app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
+    randomString = "bZmgFwcMtloKpnjYjgLcPIU9WDDGFobSFpZGaHMsgG2ck28g5Y6H940Y1OhLgG2ck28g5Y6H940Y1OhLSOlj7W5TPgZjNFsyV3w7"
+    app.config['JWT_SECRET_KEY'] = randomString  # Change this!
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
