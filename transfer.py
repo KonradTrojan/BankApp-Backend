@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, accountNumToAccountIDt
+from project.mysqlHandler import mysql, isOwner, accountNumToAccountID
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
