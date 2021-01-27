@@ -15,7 +15,7 @@ def customers():
     resp = jsonify(data)
     return resp
 
-@customersblueprint.route('/customer/', methods=['GET', 'DELETE'])
+@customersblueprint.route('/customer', methods=['GET', 'DELETE'])
 @jwt_required
 def customersForId():
     conn = mysql.connect()
@@ -25,7 +25,7 @@ def customersForId():
         cursor.execute(sql, [id])
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     else:
-        identity = get_jwt_identity
+        identity = 1
         conn = mysql.connect()
         cursor = conn.cursor()
         sql = """select login, firstName, lastName, email, phone, dateBecomeCustomer from customers where idCustomers= %s """
