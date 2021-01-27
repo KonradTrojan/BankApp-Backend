@@ -10,13 +10,13 @@ from project.jwtHandler import jwt, blacklist
 
 def create_app(test_config=None):
     # utworzenie nowej instacji aplikacji
+    randomString = "bZmgFwcMtloKpnjYjgLcPIU9WDDGFobSFpZGaHMsgG2ck28g5Y6H940Y1OhLgG2ck28g5Y6H940Y1OhLSOlj7W5TPgZjNFsyV3w7"
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=randomString,
     )
 
     # konfigurowanie danych dla flask_jwt
-    randomString = "bZmgFwcMtloKpnjYjgLcPIU9WDDGFobSFpZGaHMsgG2ck28g5Y6H940Y1OhLgG2ck28g5Y6H940Y1OhLSOlj7W5TPgZjNFsyV3w7"
     app.config['JWT_SECRET_KEY'] = randomString  # Change this!
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
