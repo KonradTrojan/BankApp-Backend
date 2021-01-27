@@ -17,7 +17,7 @@ def accounts1():
 
     for row in data:
         accountsTable.append(row[0])
-        return row[0]
+        return str(row[0])
 
     for id in accountsTable:
         return str(id)
