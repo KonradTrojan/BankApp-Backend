@@ -20,9 +20,9 @@ def credit_cards():
         idCards = idCards + getIdsCreditCardsOfAccount(id)
 
     for id in idCards:
-        sql = """select idAccounts, maximumLimit, expiryDate from credit_cards where idAccounts= %s """
+        sql = """select idAccounts, maximumLimit, expiryDate from credit_cards where idCreditCards= %s """
         cursor.execute(sql, [id])
-        data = cursor.fetchall()
+        data = cursor.fetchone()
 
         userData = []
         for row in data:
