@@ -7,6 +7,8 @@ from project.credit_cards import credit_cardsblueprint
 from project.customers import customersblueprint
 from project.login import loginblueprint
 from project.jwtHandler import jwt, blacklist
+from project.test import testblueprint
+
 
 def create_app(test_config=None):
     # utworzenie nowej instacji aplikacji
@@ -52,5 +54,5 @@ def create_app(test_config=None):
     app.register_blueprint(credit_cardsblueprint)
     app.register_blueprint(customersblueprint)
     app.register_blueprint(loginblueprint)
-
+    app.register_blueprint(testblueprint)
     return app
