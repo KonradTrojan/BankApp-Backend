@@ -7,7 +7,7 @@ accountsblueprint = Blueprint('accountsblueprint', __name__)
 
 
 
-@accountsblueprint.route('/accounts')
+@accountsblueprint.route('/allaccounts')
 def accounts():
     cursor = mysql.get_db().cursor()
     sql = """select * from accounts"""
@@ -53,7 +53,7 @@ def accountsForId(id):
         conn.close()
         return resp
 
-@accountsblueprint.route('/accounts1')
+@accountsblueprint.route('/accounts', methods=['GET'])
 @jwt_required
 def accountsOfCustomer():
     identity = get_jwt_identity()
