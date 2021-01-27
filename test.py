@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from . import mysql
-from project.transfer import hasMoney
-from project.mysqlHandler import accountNumToAccountID
+
+from project.mysqlHandler import accountNumToAccountID, hasMoney
 testblueprint = Blueprint('testblueprint', __name__)
 
 @testblueprint.route('/test')

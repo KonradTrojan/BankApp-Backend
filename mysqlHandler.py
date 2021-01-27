@@ -64,3 +64,16 @@ def accountNumToAccountID(accountNum):
     data = cursor.fetchall()
 
     return data[0]
+
+def hasMoney(accountsId, amount):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select balance from accounts where idAccounts = %s """
+    cursor.execute(sql, [accountsId])
+    data = cursor.fetchall()
+
+    balance = data[0]
+    if balance - amount >= 0:
+        return True
+    else:
+        return False
