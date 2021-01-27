@@ -36,7 +36,7 @@ def customersForId():
         for row in data:
             userData.append(row)
 
-        return {
+        return jsonify({
             'idCustomer': identity,
             'login': userData[0],
             'firstName': userData[1],
@@ -44,6 +44,6 @@ def customersForId():
             'email': userData[3],
             'phone': userData[4],
             'dataBecomeCustomer': userData[5]
-        }
+        })
 
 
