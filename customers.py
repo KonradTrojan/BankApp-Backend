@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_claims
 )
-from jwtHandler import jwt
+from project.jwtHandler import jwt
 customersblueprint = Blueprint('customersblueprint', __name__)
 
 @jwt.user_claims_loader
