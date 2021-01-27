@@ -37,7 +37,7 @@ def credit_cards():
         })
     return jsonify(myJson)
 
-@credit_cardsblueprint.route('/credit_cards/<int:id>', methods=['GET'])
+@credit_cardsblueprint.route('/credit_cards/<int:idAccount>', methods=['GET'])
 @jwt_required
 def creditCardsOfAccount(idAccount):
     myJson = []
