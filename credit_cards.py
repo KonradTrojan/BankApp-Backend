@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from project.mysqlHandler import mysql, getIdsAccountsOfCustomer
+from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, getIdsCreditCardsOfAccount
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
@@ -14,19 +14,23 @@ def credit_cards():
     myJson = []
     conn = mysql.connect()
     cursor = conn.cursor()
-    for id in accountsIDs:
 
-        sql = """select idCreditCards, maximumLimit, expiryDate from credit_cards where idAccounts= %s """
+    idCards = []
+    for id in accountsIDs:
+        idCards = idCards + getIdsCreditCardsOfAccount(id)
+
+    for id in idCards:
+        sql = """select idAccounts, maximumLimit, expiryDate from credit_cards where idAccounts= %s """
         cursor.execute(sql, [id])
-        data = cursor.fetchone()
+        data = cursor.fetchall()
 
         userData = []
         for row in data:
             userData.append(row)
 
         myJson.append({
-            'idAccounts': id,
-            'idCreditCards': userData[0],
+            'idCreditCards': id,
+            'idAccounts': userData[0],
             'maximumLimit': userData[1],
             'expiryDate': userData[2]
         })

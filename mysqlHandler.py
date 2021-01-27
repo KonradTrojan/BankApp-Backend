@@ -15,3 +15,17 @@ def getIdsAccountsOfCustomer(idCustomer):
         accountsIDs.append(row[0])
 
     return accountsIDs
+
+def getIdsCreditCardsOfAccount(idAccounts):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select idCreditCards from credit_cards where idAccounts= %s """
+    cursor.execute(sql, [idAccounts])
+    data = cursor.fetchall()
+
+    # wpisanie do tablicy id wszystkich kont zalogowanego użytkownika
+    cardsID = []
+    for row in data:
+        cardsID.append(row[0])
+
+    return cardsID
