@@ -17,10 +17,27 @@ def accounts1():
 
     for row in data:
         accountsTable.append(row[0])
-        return str(row[0])
 
+    myJson = []
     for id in accountsTable:
-        return str(id)
+        try:
+            sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
+            cursor.execute(sql, [id])
+            data = cursor.fetchone()
+            userData = []
+            for row in data:
+                userData.append(row)
+
+            myJson.append({
+                'idAccounts': id,
+                'number': userData[0],
+                'dataOpened': userData[1],
+                'balance': userData[2]
+            })
+        except TypeError:
+            print("testerrror")
+
+        return myJson
 
 
 @accountsblueprint.route('/accounts')
@@ -76,7 +93,7 @@ def add_claims_to_access_token(identity):
     sql = """select idAccounts from owners where idCustomers= %s """
     cursor.execute(sql, [identity])
     data = cursor.fetchone()
-    return data
+
     userData = []
     for row in data:
         userData.append(row)
@@ -90,3 +107,4 @@ def add_claims_to_access_token(identity):
         'phone': userData[4],
         'dataBecomeCustomer': userData[5]
     }
+
