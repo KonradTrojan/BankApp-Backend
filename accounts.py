@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session, json
-from project.mysqlHandler import mysql
+from project.mysqlHandler import mysql, getIdsAccountsOfCustomer
 from datetime import datetime
 from flask_jwt_extended import jwt_required,get_jwt_identity
 
@@ -20,8 +20,8 @@ def accountsOfCustomer():
     identity = get_jwt_identity()
 
     # połączenie z bd
-    conn = mysql.connect()
-    cursor = conn.cursor()
+    '''
+    
     sql = """select idAccounts from owners where idCustomers= %s """
     cursor.execute(sql, [identity])
     data = cursor.fetchall()
@@ -30,9 +30,12 @@ def accountsOfCustomer():
     accountsIDs = []
     for row in data:
         accountsIDs.append(row[0])
-
+    '''
+    accountsIDs = getIdsAccountsOfCustomer(identity)
     # wpisanie do tablicy wszyskich informacji o koncie o danym id
     myJson = []
+    conn = mysql.connect()
+    cursor = conn.cursor()
     for id in accountsIDs:
 
         sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
