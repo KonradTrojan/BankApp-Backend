@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, getIdsCreditCardsOfAccount
+from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, getIdsCreditCardsOfAccount, isOwner
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
@@ -21,9 +21,11 @@ def credit_cards():
 @credit_cardsblueprint.route('/credit_cards/<int:idAccount>', methods=['GET'])
 @jwt_required
 def creditCardsOfAccount(idAccount):
-
-    idCards = getIdsCreditCardsOfAccount(idAccount)
-    return getInfoAboutCards(idCards)
+    if isOwner(get_jwt_identity(), idAccount):
+        idCards = getIdsCreditCardsOfAccount(idAccount)
+        return getInfoAboutCards(idCards)
+    else:
+        return jsonify({"msg": "Brak dostępu"}), 401
 
 def getInfoAboutCards(idCards):
     myJson = []

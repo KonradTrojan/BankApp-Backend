@@ -1,13 +1,11 @@
-from flask import Blueprint, jsonify, request, session, json, jsonify
-from . import mysql
-from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, getIdsTransferOfAccount
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
+from flask import Blueprint, jsonify
+from project.mysqlHandler import mysql, isOwner, getIdsAccountsOfCustomer, getIdsTransferOfAccount
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
+
+# wyświetla wszystkie transakcje danego użytkownika
 @transactionsblueprint.route('/transactions')
 @jwt_required
 def transactions():
@@ -20,11 +18,16 @@ def transactions():
 
     return getInfoAboutTranscation(transactionsId)
 
-@transactionsblueprint.route('/transactions/<int:intAccount>', methods=['GET'])
+
+# wyświetla wszystkie transakcje na koncie o podanym idAccount
+@transactionsblueprint.route('/transactions/<int:idAccount>', methods=['GET'])
 @jwt_required
-def transactionsOfAccount(intAccount):
-    idTransactions = getIdsTransferOfAccount(intAccount)
-    return getInfoAboutTranscation(idTransactions)
+def transactionsOfAccount(idAccount):
+    if isOwner(get_jwt_identity(),idAccount):
+        idTransactions = getIdsTransferOfAccount(idAccount)
+        return getInfoAboutTranscation(idTransactions)
+    else:
+        return jsonify({"msg": "Brak dostępu"}), 401
 
 def getInfoAboutTranscation(idTransactions):
     myJson = []

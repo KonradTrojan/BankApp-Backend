@@ -2,6 +2,8 @@ from flaskext.mysql import MySQL
 
 mysql = MySQL()
 
+
+# zwraca listę wszystkich kont przypisanych do danego idCustomer
 def getIdsAccountsOfCustomer(idCustomer):
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -16,6 +18,8 @@ def getIdsAccountsOfCustomer(idCustomer):
 
     return accountsIDs
 
+
+# zwraca listę wszystkich kart przypisanych do danego idAccount
 def getIdsCreditCardsOfAccount(idAccount):
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -30,6 +34,8 @@ def getIdsCreditCardsOfAccount(idAccount):
 
     return cardsID
 
+
+# zwraca listę wszystkich transakcji przypisanych do danego idAccount
 def getIdsTransferOfAccount(idAccount):
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -42,3 +48,10 @@ def getIdsTransferOfAccount(idAccount):
         transactionsID.append(row[0])
 
     return transactionsID
+
+
+def isOwner(identity, idAcounts):
+    for id in getIdsAccountsOfCustomer(identity):
+        if id == idAcounts:
+            return True
+    return False
