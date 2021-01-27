@@ -6,7 +6,7 @@ from project.jwtHandler import jwt, blacklist
 accountsblueprint = Blueprint('accountsblueprint', __name__)
 
 @accountsblueprint.route('/accounts1')
-def accounts():
+def accounts1():
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idAccounts from owners where idCustomers= %s """
