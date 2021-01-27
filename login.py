@@ -1,11 +1,11 @@
 from flask import Flask, redirect, render_template, request,session,url_for,Blueprint,jsonify,Response,json
 import jwt, datetime
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
+    JWTManager, jwt_required, create_access_token, get_raw_jwt,
     get_jwt_claims
 )
 from . import mysql
-from project.jwtHandler import jwt
+from project.jwtHandler import jwt, blacklist
 loginblueprint = Blueprint('loginblueprint', __name__)
 
 @loginblueprint.route("/loginjwt", methods = ['POST'])
@@ -38,3 +38,14 @@ def loginJWT():
     access_token = create_access_token(identity=idCustomers)
     return jsonify(access_token=access_token), 200
 
+@loginblueprint.route('/logoutjwt', methods=['DELETE'])
+@jwt_required
+def logout():
+    jti = get_raw_jwt()['jti']
+    blacklist.add(jti)
+    return jsonify({"msg": "Successfully logged out"}), 200
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    jti = decrypted_token['jti']
+    return jti in blacklist

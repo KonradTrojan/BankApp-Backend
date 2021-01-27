@@ -9,7 +9,7 @@ from project.transactions import transactionsblueprint
 from project.credit_cards import credit_cardsblueprint
 from project.customers import customersblueprint
 from project.login import loginblueprint
-from project.jwtHandler import jwt
+from project.jwtHandler import jwt, blacklist
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
@@ -22,10 +22,10 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
-    # obsługa jwt
-    # app.secret_key = "23edbcAN1fdsanmDAS32r0wCsdodjfsiajdsdfajcifdjoadsfp"
-    app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
 
+    app.config['JWT_SECRET_KEY'] = 'dsanjasdnldIOI932DHQ9xJISDHJIHF9u90euxdjqidsasdccatser'  # Change this!
+    app.config['JWT_BLACKLIST_ENABLED'] = True
+    app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
     jwt.init_app(app)
 

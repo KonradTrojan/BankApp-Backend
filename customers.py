@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, session, json
 from . import mysql
 from flask_jwt_extended import jwt_required, get_jwt_claims
-from project.jwtHandler import jwt
+from project.jwtHandler import jwt, blacklist
 customersblueprint = Blueprint('customersblueprint', __name__)
 
 
