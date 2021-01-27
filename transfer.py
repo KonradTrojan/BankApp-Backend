@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, isOwner, accountNumToAccountIDt
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
+from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
 
 @transferBlueprint.route("/transfer",methods=['POST'])
@@ -17,19 +17,39 @@ def transfer():
     receiverId = accountNumToAccountID(accountNumber)
     senderId = accountNumToAccountID(fromAccount)
 
-    return ''
+    # TODO później wciągnąć jakoś ten warunek do commita
+    if not hasMoney(senderId, amount):
+        return jsonify({'msg': "Nie wystarczające środki na koncie"}), 401
+    balance = hasMoney(senderId, amount)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
+    cursor.execute(sql, [amount, senderId])
+
+    sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
+    cursor.execute(sql, [amount, receiverId])
+
+    sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
+    old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    cursor.execute(sql, [datetime.now(), amount, senderId, receiverId, balance, balance-amount, title, None])
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({'msg': 'transkacja udana'}), 200
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select balance from accounts where idAccounts = %s """
     cursor.execute(sql, [accountsId])
-    data = cursor.fetchall()
+    data = cursor.fetchone()
 
-    balance = data[0]
+    balance = float(data[0])
     if balance - amount >= 0:
-        return True
+        return balance
     else:
         return False
-
 
