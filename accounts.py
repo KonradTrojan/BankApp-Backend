@@ -1,11 +1,9 @@
 from flask import Blueprint, jsonify, request, session, json
 from project.mysqlHandler import mysql
 from datetime import datetime
-from project.jwtHandler import jwt, blacklist
-from flask_jwt_extended import jwt_required, get_jwt_claims,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity
+
 accountsblueprint = Blueprint('accountsblueprint', __name__)
-
-
 
 @accountsblueprint.route('/allaccounts')
 def accounts():
@@ -16,7 +14,45 @@ def accounts():
     resp = jsonify(data)
     return resp
 
+@accountsblueprint.route('/accounts', methods=['GET'])
+@jwt_required
+def accountsOfCustomer():
+    identity = get_jwt_identity()
 
+    # połączenie z bd
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select idAccounts from owners where idCustomers= %s """
+    cursor.execute(sql, [identity])
+    data = cursor.fetchall()
+
+    # wpisanie do tablicy id wszystkich kont zalogowanego użytkownika
+    accountsIDs = []
+    for row in data:
+        accountsIDs.append(row[0])
+
+    # wpisanie do tablicy wszyskich informacji o koncie o danym id
+    myJson = []
+    for id in accountsIDs:
+
+        sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
+        cursor.execute(sql, [id])
+        data = cursor.fetchone()
+
+        userData = []
+        for row in data:
+            userData.append(row)
+
+        myJson.append({
+            'idAccounts': id,
+            'number': userData[0],
+            'dataOpened': userData[1],
+            'balance': userData[2]
+        })
+
+    return jsonify(myJson)
+
+# TODO poniższe usunąć, gdy nie będzie już potrzebne
 @accountsblueprint.route('/accounts/<int:id>', methods=['GET', 'POST', 'DELETE'])
 def accountsForId(id):
     conn = mysql.connect()
@@ -52,37 +88,4 @@ def accountsForId(id):
         resp = jsonify(data)
         conn.close()
         return resp
-
-@accountsblueprint.route('/accounts', methods=['GET'])
-@jwt_required
-def accountsOfCustomer():
-    identity = get_jwt_identity()
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    sql = """select idAccounts from owners where idCustomers= %s """
-    cursor.execute(sql, [identity])
-    data = cursor.fetchall()
-    accountsTable = []
-
-    for row in data:
-        accountsTable.append(row[0])
-
-    myJson = []
-    for id in accountsTable:
-
-        sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
-        cursor.execute(sql, [id])
-        data = cursor.fetchone()
-        userData = []
-        for row in data:
-            userData.append(row)
-
-        myJson.append({
-            'idAccounts': id,
-            'number': userData[0],
-            'dataOpened': userData[1],
-            'balance': userData[2]
-        })
-
-    return jsonify(myJson)
 

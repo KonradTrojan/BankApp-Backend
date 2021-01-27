@@ -1,7 +1,6 @@
-from flask import Blueprint, jsonify, request, session, json
+from flask import Blueprint, jsonify, request, json
 from . import mysql
-from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity
-from project.jwtHandler import jwt, blacklist
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 customersblueprint = Blueprint('customersblueprint', __name__)
 
@@ -15,16 +14,13 @@ def customers():
     resp = jsonify(data)
     return resp
 
-@customersblueprint.route('/customer', methods=['GET', 'DELETE'])
+@customersblueprint.route('/customer', methods=['GET'])
 @jwt_required
-def customersForId():
-    conn = mysql.connect()
-    if request.method == 'DELETE':
-        cursor = conn.cursor()
-        sql = """delete from customers where id = '%s' """
-        cursor.execute(sql, [id])
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
-    else:
+def customer():
+
+    if request.method == 'GET':
+
+        # połączenie z BD
         identity = get_jwt_identity()
         conn = mysql.connect()
         cursor = conn.cursor()
@@ -32,6 +28,7 @@ def customersForId():
         cursor.execute(sql, [identity])
         data = cursor.fetchone()
 
+        # wpisanie do tablicy wszystkich infromacji o zalogowanym użutkowniku
         userData = []
         for row in data:
             userData.append(row)

@@ -8,18 +8,15 @@ from project.credit_cards import credit_cardsblueprint
 from project.customers import customersblueprint
 from project.login import loginblueprint
 from project.jwtHandler import jwt, blacklist
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
-
 
 def create_app(test_config=None):
-    # create and configure the app
+    # utworzenie nowej instacji aplikacji
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
+
+    # konfigurowanie danych dla flask_jwt
     randomString = "bZmgFwcMtloKpnjYjgLcPIU9WDDGFobSFpZGaHMsgG2ck28g5Y6H940Y1OhLgG2ck28g5Y6H940Y1OhLSOlj7W5TPgZjNFsyV3w7"
     app.config['JWT_SECRET_KEY'] = randomString  # Change this!
     app.config['JWT_BLACKLIST_ENABLED'] = True
@@ -39,14 +36,12 @@ def create_app(test_config=None):
     except OSError:
         pass
 
- 
     # MySQL configurations
     app.config['MYSQL_DATABASE_USER'] = 'g18'
     app.config['MYSQL_DATABASE_PASSWORD'] = 'gd5qbk7z'
     app.config['MYSQL_DATABASE_DB'] = 'g18'
     app.config['MYSQL_DATABASE_HOST'] = '127.0.0.1'
     mysql.init_app(app)
-
 
     # a simple page that says hello
     @app.route('/')
