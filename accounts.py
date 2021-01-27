@@ -20,7 +20,7 @@ def accounts1():
 
 
     for id in accountsTable:
-        return id
+        return str(id)
 
 
 @accountsblueprint.route('/accounts')
