@@ -32,7 +32,7 @@ def customersForId():
 def add_claims_to_access_token(identity):
     conn = mysql.connect()
     cursor = conn.cursor()
-    sql = """select idCustomers, firstName, lastName, email, phone, dateBecomeCustomer from customers where idCustomers= %s """
+    sql = """select login, firstName, lastName, email, phone, dateBecomeCustomer from customers where idCustomers= %s """
     cursor.execute(sql, [identity])
     data = cursor.fetchone()
 
@@ -41,8 +41,8 @@ def add_claims_to_access_token(identity):
         userData.append(row)
 
     return {
-        'login': identity,
-        'idCustomer': userData[0],
+        'idCustomer': identity,
+        'login': userData[0],
         'firstName': userData[1],
         'lastName': userData[2],
         'email': userData[3],
