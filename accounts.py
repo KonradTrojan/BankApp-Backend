@@ -5,14 +5,6 @@ from project.jwtHandler import jwt, blacklist
 from flask_jwt_extended import jwt_required, get_jwt_claims
 accountsblueprint = Blueprint('accountsblueprint', __name__)
 
-@accountsblueprint.route('/accounts1')
-@jwt_required
-def accounts1():
-    claims = get_jwt_claims()
-    return claims, 200
-
-
-    return jsonify(myJson)
 
 
 @accountsblueprint.route('/accounts')
@@ -61,8 +53,9 @@ def accountsForId(id):
         conn.close()
         return resp
 
-@jwt.user_claims_loader
-def add_claims_to_access_token(identity):
+@accountsblueprint.route('/accounts1')
+@jwt_required
+def accountsOfCustomer(identity):
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idAccounts from owners where idCustomers= %s """
