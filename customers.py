@@ -50,7 +50,7 @@ def customersForId(id):
         cursor.execute(sql, [id])
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     else:
-        #claims = get_jwt_claims()
-       # return claims, 200
-       return None
+        claims = get_jwt_claims()
+        return claims, 200
+
 
