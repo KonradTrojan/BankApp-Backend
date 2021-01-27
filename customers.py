@@ -12,7 +12,8 @@ customersblueprint = Blueprint('customersblueprint', __name__)
 def add_claims_to_access_token(identity):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("""select idCustomer, firstName, lastName, email, phone, dateBecomeCustomer from customers where login= '%s' """, [identity])
+    sql="""select idCustomer, firstName, lastName, email, phone, dateBecomeCustomer from customers where login= '%s' """
+    cursor.execute(sql, [identity])
     data = cursor.fetchone()
     idCustomer = data[0]
     firstName = data[1]
