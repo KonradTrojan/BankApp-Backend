@@ -7,6 +7,7 @@ accountsblueprint = Blueprint('accountsblueprint', __name__)
 
 @accountsblueprint.route('/accounts1')
 def accounts1():
+    identity = 1
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idAccounts from owners where idCustomers= %s """
