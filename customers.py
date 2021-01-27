@@ -1,10 +1,6 @@
 from flask import Blueprint, jsonify, request, session, json
 from . import mysql
-from flask import Flask, jsonify, request
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_claims
-)
+from flask_jwt_extended import jwt_required, get_jwt_claims
 from project.jwtHandler import jwt
 customersblueprint = Blueprint('customersblueprint', __name__)
 
