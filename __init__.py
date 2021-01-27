@@ -1,8 +1,6 @@
 import os
 from flask import Flask,session, redirect, escape, url_for
-from flaskext.mysql import MySQL
-
-mysql = MySQL()
+from mysqlHandler import mysql
 
 from project.accounts import accountsblueprint
 from project.transactions import transactionsblueprint
@@ -49,9 +47,6 @@ def create_app(test_config=None):
     app.config['MYSQL_DATABASE_HOST'] = '127.0.0.1'
     mysql.init_app(app)
 
-    #global mysql connection
-    conn = mysql.connect()
-    cursor = conn.cursor()
 
     # a simple page that says hello
     @app.route('/')

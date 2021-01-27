@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session, json
-from . import mysql
+from project.mysqlHandler import mysql
 from datetime import datetime
 from project.jwtHandler import jwt, blacklist
 from flask_jwt_extended import jwt_required, get_jwt_claims,get_jwt_identity
