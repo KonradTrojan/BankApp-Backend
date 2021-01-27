@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_claims
 accountsblueprint = Blueprint('accountsblueprint', __name__)
 
 @accountsblueprint.route('/accounts1')
+@jwt_required
 def accounts1():
     claims = get_jwt_claims()
     return claims, 200
