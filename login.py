@@ -21,7 +21,7 @@ def loginJWT():
         return jsonify({"msg": "Missing password parameter"}), 400
 
     cursor = mysql.get_db().cursor()
-    '''
+
     sql = """select password from customers where login like %s"""
     cursor.execute(sql, [username])
 
@@ -33,7 +33,7 @@ def loginJWT():
 
     if password != password_:
         return jsonify({"msg": "Bad username or password"}), 401
-    '''
+
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token), 200
 
