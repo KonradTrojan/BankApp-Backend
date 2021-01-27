@@ -16,8 +16,8 @@ def accounts1():
     accountsTable = []
 
     for row in data:
-        accountsTable.append(row)
-
+        accountsTable.append(row[0])
+        return row[0]
 
     for id in accountsTable:
         return str(id)
