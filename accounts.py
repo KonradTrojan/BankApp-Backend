@@ -37,7 +37,7 @@ def accounts1():
         except TypeError:
             print("testerrror")
 
-        return myJson
+        return jsonify(myJson)
 
 
 @accountsblueprint.route('/accounts')
