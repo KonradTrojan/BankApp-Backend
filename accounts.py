@@ -13,7 +13,7 @@ def accounts1():
     sql = """select idAccounts from owners where idCustomers= %s """
     cursor.execute(sql, [identity])
     data = cursor.fetchall()
-    return str(data[0])
+    return str(data[2])
 
 
 @accountsblueprint.route('/accounts')
