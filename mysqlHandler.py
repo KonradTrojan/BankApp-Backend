@@ -70,7 +70,7 @@ def hasMoney(accountsId, amount):
     cursor = conn.cursor()
     sql = """select balance from accounts where idAccounts = %s """
     cursor.execute(sql, [accountsId])
-    data = cursor.fetchall()
+    data = cursor.fetchone()
 
     balance = float(data[0])
     if balance - amount >= 0:
