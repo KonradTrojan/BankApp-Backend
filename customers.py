@@ -42,7 +42,7 @@ def customers():
 
 @customersblueprint.route('/customer/', methods=['GET', 'DELETE'])
 @jwt_required
-def customersForId(id):
+def customersForId():
     conn = mysql.connect()
     if request.method == 'DELETE':
         cursor = conn.cursor()

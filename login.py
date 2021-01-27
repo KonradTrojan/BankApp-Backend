@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     get_jwt_claims
 )
 from . import mysql
-
+from project.jwtHandler import jwt
 loginblueprint = Blueprint('loginblueprint', __name__)
 
 @loginblueprint.route("/loginjwt", methods = ['POST'])
