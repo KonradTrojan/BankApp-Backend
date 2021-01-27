@@ -1,5 +1,5 @@
 from flaskext.mysql import MySQL
-
+from flask import jsonify
 mysql = MySQL()
 
 
@@ -55,3 +55,12 @@ def isOwner(identity, idAcounts):
         if id == idAcounts:
             return True
     return False
+
+def accountNumToAccountID(accountNum):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select idAccounts from accounts where number= %s """
+    cursor.execute(sql, [accountNum])
+    data = cursor.fetchall()
+
+    return data[0]
