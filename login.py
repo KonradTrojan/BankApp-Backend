@@ -22,18 +22,19 @@ def loginJWT():
 
     cursor = mysql.get_db().cursor()
 
-    sql = """select password from customers where login like %s"""
+    sql = """select password, idCustomers from customers where login like %s"""
     cursor.execute(sql, [username])
 
     data = cursor.fetchone()
     try:
         password_ = data[0]
+        idCustomers = data[1]
     except TypeError:
         return jsonify({"msg": "Bad username or password"}), 401
 
     if password != password_:
         return jsonify({"msg": "Bad username or password"}), 401
 
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(identity=idCustomers)
     return jsonify(access_token=access_token), 200
 
