@@ -5,8 +5,6 @@ from project.mysqlHandler import accountNumToAccountID
 testblueprint = Blueprint('testblueprint', __name__)
 
 @testblueprint.route('/test')
-@transferBlueprint.route("/transfer", methods=['POST'])
-@jwt_required
 def transfer():
 
     title = "tytul"
