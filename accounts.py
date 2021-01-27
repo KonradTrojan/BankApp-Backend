@@ -19,6 +19,7 @@ def accounts1():
         accountsTable.append(row[0])
 
     myJson = []
+    return jsonify(accountsTable)
     for id in accountsTable:
         try:
             sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
