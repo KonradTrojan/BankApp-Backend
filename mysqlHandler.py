@@ -16,11 +16,11 @@ def getIdsAccountsOfCustomer(idCustomer):
 
     return accountsIDs
 
-def getIdsCreditCardsOfAccount(idAccounts):
+def getIdsCreditCardsOfAccount(idAccount):
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idCreditCards from credit_cards where idAccounts= %s """
-    cursor.execute(sql, [idAccounts])
+    cursor.execute(sql, [idAccount])
     data = cursor.fetchall()
 
     # wpisanie do tablicy id wszystkich kont zalogowanego użytkownika
@@ -29,3 +29,16 @@ def getIdsCreditCardsOfAccount(idAccounts):
         cardsID.append(row[0])
 
     return cardsID
+
+def getIdsTransferOfAccount(idAccount):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select idTransactions  from transactions where idAccounts= %s """
+    cursor.execute(sql, [idAccount])
+    data = cursor.fetchall()
+
+    transactionsID = []
+    for row in data:
+        transactionsID.append(row[0])
+
+    return transactionsID

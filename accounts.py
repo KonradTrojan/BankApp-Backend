@@ -19,18 +19,6 @@ def accounts():
 def accountsOfCustomer():
     identity = get_jwt_identity()
 
-    # połączenie z bd
-    '''
-    
-    sql = """select idAccounts from owners where idCustomers= %s """
-    cursor.execute(sql, [identity])
-    data = cursor.fetchall()
-
-    # wpisanie do tablicy id wszystkich kont zalogowanego użytkownika
-    accountsIDs = []
-    for row in data:
-        accountsIDs.append(row[0])
-    '''
     accountsIDs = getIdsAccountsOfCustomer(identity)
     # wpisanie do tablicy wszyskich informacji o koncie o danym id
     myJson = []
