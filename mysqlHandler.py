@@ -72,7 +72,7 @@ def hasMoney(accountsId, amount):
     cursor.execute(sql, [accountsId])
     data = cursor.fetchall()
 
-    balance = data[0]
+    balance = float(data[0])
     if balance - amount >= 0:
         return True
     else:
