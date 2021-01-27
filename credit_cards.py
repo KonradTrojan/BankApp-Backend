@@ -34,5 +34,5 @@ def credit_cards():
             'maximumLimit': userData[1],
             'expiryDate': userData[2]
         })
-    return myJson
+    return jsonify(myJson)
 
