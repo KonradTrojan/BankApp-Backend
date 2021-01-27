@@ -12,7 +12,7 @@ def accounts1():
     cursor = conn.cursor()
     sql = """select idAccounts from owners where idCustomers= %s """
     cursor.execute(sql, [identity])
-    data = cursor.fetchone()
+    data = cursor.fetchall()
     return str(data[1])
 
 
