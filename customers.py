@@ -7,7 +7,7 @@ from flask_jwt_extended import (
 )
 from project.jwtHandler import jwt
 customersblueprint = Blueprint('customersblueprint', __name__)
-
+'''
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
     conn = mysql.connect()
@@ -30,7 +30,7 @@ def add_claims_to_access_token(identity):
         'phone': phone,
         'dataBecomeCustomer': dataBecomeCustomer
     }
-
+'''
 @customersblueprint.route('/customers')
 def customers():
     cursor = mysql.get_db().cursor()
@@ -39,7 +39,7 @@ def customers():
     data = cursor.fetchall()
     resp = jsonify(data)
     return resp
-
+'''
 @customersblueprint.route('/customer/', methods=['GET', 'DELETE'])
 @jwt_required
 def customersForId(id):
@@ -53,4 +53,4 @@ def customersForId(id):
         claims = get_jwt_claims()
         return claims, 200
 
-
+'''
