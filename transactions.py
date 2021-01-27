@@ -20,7 +20,7 @@ def transactions():
 
     return getInfoAboutTranscation(transactionsId)
 
-@transactionsblueprint.route('/transations/<int:intAccount>', methods='GET')
+@transactionsblueprint.route('/transations/<int:intAccount>', methods=['GET'])
 @jwt_required
 def transactionsOfAccount(intAccount):
     idTransactions = getIdsTransferOfAccount(intAccount)
