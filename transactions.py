@@ -11,6 +11,8 @@ transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 @transactionsblueprint.route('/transactions')
 def transactions():
     cursor = mysql.get_db().cursor()
+
+
     SQL="select * from transactions"
     cursor.execute(SQL)
     data=cursor.fetchall()
