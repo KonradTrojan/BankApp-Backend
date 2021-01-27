@@ -8,29 +8,8 @@ from flask_jwt_extended import (
 from project.jwtHandler import jwt
 customersblueprint = Blueprint('customersblueprint', __name__)
 
-@jwt.user_claims_loader
-def add_claims_to_access_token(identity):
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    sql="""select idCustomers, firstName, lastName, email, phone, dateBecomeCustomer from customers where login= %s """
-    cursor.execute(sql, [identity])
-    data = cursor.fetchone()
-    idCustomer = data[0]
-    firstName = data[1]
-    lastName = data[2]
-    email = data[3]
-    phone = data[4]
-    dataBecomeCustomer = data[5]
-    return {
-        'login': identity,
-        'idCustomer': idCustomer,
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'phone': phone,
-        'dataBecomeCustomer': dataBecomeCustomer
-    }
 
+# TODO /customers należy usunąć, chyba że dodajemy tryb administratora
 @customersblueprint.route('/customers')
 def customers():
     cursor = mysql.get_db().cursor()
@@ -53,4 +32,24 @@ def customersForId():
         claims = get_jwt_claims()
         return claims, 200
 
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql="""select idCustomers, firstName, lastName, email, phone, dateBecomeCustomer from customers where login= %s """
+    cursor.execute(sql, [identity])
+    data = cursor.fetchone()
 
+    userData = []
+    for row in data:
+        userData.append(row)
+
+    return {
+        'login': identity,
+        'idCustomer': userData[0],
+        'firstName': userData[1],
+        'lastName': userData[2],
+        'email': userData[3],
+        'phone': userData[4],
+        'dataBecomeCustomer': userData[5]
+    }
