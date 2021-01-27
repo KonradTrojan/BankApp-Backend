@@ -13,6 +13,7 @@ def loginJWT():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
+    # sprawdzanie danych wejściowych
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     if not username:
@@ -20,8 +21,8 @@ def loginJWT():
     if not password:
         return jsonify({"msg": "Missing password parameter"}), 400
 
+    # pobranie danych z bazy danych
     cursor = mysql.get_db().cursor()
-
     sql = """select password, idCustomers from customers where login like %s"""
     cursor.execute(sql, [username])
 
@@ -32,12 +33,15 @@ def loginJWT():
     except TypeError:
         return jsonify({"msg": "Bad username or password"}), 401
 
+    # hashowanie i porównanie haseł
+    # TODO dodać hashowanie
     if password != password_:
         return jsonify({"msg": "Bad username or password"}), 401
 
     access_token = create_access_token(identity=idCustomers)
     return jsonify(access_token=access_token), 200
 
+# wylogowywanie
 @loginblueprint.route('/logoutjwt', methods=['DELETE'])
 @jwt_required
 def logout():
@@ -45,6 +49,7 @@ def logout():
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
 
+# dodawanie wygasłych tokenów do blacklisty
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
