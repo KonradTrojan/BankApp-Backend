@@ -76,7 +76,6 @@ def getInfoAboutTranscation(idTransactions, type):
 
     myJson = []
     simpleData = []
-    i = 0
     for id in idTransactions:
         sql = """select idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
         message from transactions where idTransactions = %s """
@@ -86,8 +85,7 @@ def getInfoAboutTranscation(idTransactions, type):
         userData = []
         for row in data:
             userData.append(row)
-            simpleData[i].append(row)
-        i = i + 1
+            simpleData.append(row)
 
         myJson.append({
             'idTransactions ': id,
