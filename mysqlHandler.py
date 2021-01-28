@@ -48,7 +48,7 @@ def getIdsTransferOfAccount(idAccount):
 
     return transactionsID
 
-
+# funkcja zwraca True jeśli podane konto należy do zalogowanego użytkownika
 def isOwner(identity, idAcounts):
     for id in getIdsAccountsOfCustomer(identity):
         if id == idAcounts:

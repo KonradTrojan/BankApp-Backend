@@ -31,11 +31,11 @@ def transfer():
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
 
     # przypisanie idAccount na podstawie numeru konta
-    receiverId = accountNumToAccountID(accountNumber)
-    senderId = accountNumToAccountID(fromAccount)
+    senderId = accountNumToAccountID(accountNumber)
+    recipientId = accountNumToAccountID(fromAccount)
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
-    if len(receiverId) == 0 or len(senderId) == 0:
+    if len(recipientId) == 0 or len(senderId) == 0:
         return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
@@ -58,12 +58,12 @@ def transfer():
 
         # aktualizacja stanu konta u odbiorcy
         sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
-        cursor.execute(sql, [amount, receiverId])
+        cursor.execute(sql, [amount, recipientId])
 
         # dodanie do wpisu o transakcji
         sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
         old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-        cursor.execute(sql, [datetime.now(), amount, senderId, receiverId, balance, balance-amount, title, None])
+        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, balance, balance-amount, title, None])
 
         # commit zmian
         conn.commit()
