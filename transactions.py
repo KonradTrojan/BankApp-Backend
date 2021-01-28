@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, isOwner, getIdsAccountsOfCustomer, getIdsTransferOfAccount
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -29,10 +29,37 @@ def transactionsOfAccount(idAccount):
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
+
+# generowanie PDFa
 @transactionsblueprint.route('/transactions/pdf', methods=['POST'])
 @jwt_required
 def generatePDF():
-    return ''
+    if request.method == 'POST':
+        if not request.is_json:
+            return jsonify({"msg": "Missing JSON in request"}), 400
+
+        if not isinstance(request.json['idTransactions'], int):
+            return jsonify({"msg": "IdTransactions musi być typu int"}), 400
+
+        idTrans = request.json['idTransactions']
+
+        # sprawdzanie czy transakcja należy do konta zalogowanego użytkownika
+        if not isOwnerOfTransaction(idTrans):
+            return jsonify({"msg": "Brak dostępu do tej transakcji"}), 400
+
+        infoTrans = getInfoAboutTranscation(idTrans)
+
+        return infoTrans
+
+
+def isOwnerOfTransaction(idTransaction):
+
+    accountsList = getIdsAccountsOfCustomer(get_jwt_identity())
+    for idAcc in accountsList:
+        for idTran in getIdsTransferOfAccount(idAcc):
+            if idTran == idTransaction:
+                return True
+    return False
 
 
 def getInfoAboutTranscation(idTransactions):
