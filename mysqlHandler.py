@@ -2,7 +2,6 @@ from flaskext.mysql import MySQL
 from flask import jsonify
 mysql = MySQL()
 
-
 # zwraca listę wszystkich kont przypisanych do danego idCustomer
 def getIdsAccountsOfCustomer(idCustomer):
     conn = mysql.connect()
