@@ -56,13 +56,16 @@ def isOwner(identity, idAcounts):
     return False
 
 def accountNumToAccountID(accountNum):
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    sql = """select idAccounts from accounts where number= %s """
-    cursor.execute(sql, [accountNum])
-    data = cursor.fetchall()
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        sql = """select idAccounts from accounts where number= %s """
+        cursor.execute(sql, [accountNum])
+        data = cursor.fetchall()
 
-    return data[0]
+        return data[0]
+    except IndexError:
+        return []
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
