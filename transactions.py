@@ -49,7 +49,8 @@ def generatePDF():
 
         infoTrans = getInfoAboutTranscation(idTrans)
 
-        return infoTrans
+
+        return str(infoTrans.json['idAccounts'])
 
 
 def isOwnerOfTransaction(idTransaction):
