@@ -65,7 +65,7 @@ def accountNumToAccountID(accountNum):
 
         return data[0]
     except IndexError:
-        return []
+        return None
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()

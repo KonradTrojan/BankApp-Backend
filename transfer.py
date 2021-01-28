@@ -35,7 +35,7 @@ def transfer():
     recipientId = accountNumToAccountID(toAccountNum)
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
-    if len(recipientId) == 0 or len(senderId) == 0:
+    if recipientId is None or senderId is None:
         return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
