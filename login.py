@@ -44,7 +44,7 @@ def loginJWT():
     }
     return jsonify(ret), 200
 
-# wylogowywanie
+# wylogowywanie - należy unieważnic access_token pod /logoutjwt i fresh_token pod /logoutjwtrefresh
 @loginblueprint.route('/logoutjwt', methods=['DELETE'])
 @jwt_required
 def logout():
