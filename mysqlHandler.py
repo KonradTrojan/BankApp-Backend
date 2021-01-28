@@ -62,6 +62,9 @@ def accountNumToAccountID(accountNum):
     cursor.execute(sql, [accountNum])
     data = cursor.fetchall()
 
+    if len(data) == 0:
+        return False
+
     return data[0]
 
 def hasMoney(accountsId, amount):

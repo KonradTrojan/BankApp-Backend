@@ -27,8 +27,12 @@ def transfer():
     else:
         if amount <= 0:
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
-    receiverId = accountNumToAccountID(accountNumber)
-    senderId = accountNumToAccountID(fromAccount)
+
+    if accountNumToAccountID(accountNumber) or accountNumToAccountID(fromAccount):
+        receiverId = accountNumToAccountID(accountNumber)
+        senderId = accountNumToAccountID(fromAccount)
+    else:
+        return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
 
     # TODO później wciągnąć jakoś ten warunek do commita
 
