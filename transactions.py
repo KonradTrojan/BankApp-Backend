@@ -16,7 +16,7 @@ def transactions():
     for id in idAccounts:
         transactionsId = transactionsId + getIdsTransferOfAccount(id)
 
-    return getInfoAboutTranscation(transactionsId)
+    return getInfoAboutTranscation(transactionsId, 'JSON')
 
 
 # wyświetla wszystkie transakcje na koncie o podanym idAccount
@@ -25,7 +25,7 @@ def transactions():
 def transactionsOfAccount(idAccount):
     if isOwner(get_jwt_identity(),idAccount):
         idTransactions = getIdsTransferOfAccount(idAccount)
-        return getInfoAboutTranscation(idTransactions)
+        return getInfoAboutTranscation(idTransactions, 'JSON')
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
@@ -47,10 +47,10 @@ def generatePDF():
         if not isOwnerOfTransaction(idTrans):
             return jsonify({"msg": "Brak dostępu do tej transakcji"}), 400
 
-        infoTrans = getInfoAboutTranscation(idTrans)
+        infoTrans = getInfoAboutTranscation(idTrans, '')
 
 
-        return str(infoTrans.json['idAccounts'])
+        return str(infoTrans[0])
 
 
 def isOwnerOfTransaction(idTransaction):
@@ -62,17 +62,21 @@ def isOwnerOfTransaction(idTransaction):
                 return True
     return False
 
-
-def getInfoAboutTranscation(idTransactions):
-    myJson = []
+# funkcja zwraca informacje o podanej transakcji lub liście transakcji
+# type = 0 oznacza że wrócony typ danych to JSON, a 1, że lista
+def getInfoAboutTranscation(idTransactions, type):
     conn = mysql.connect()
     cursor = conn.cursor()
 
+    # spradzanie czy na wejściu jest int czy lista
     idTrans = idTransactions
     if isinstance(idTrans,int):
         idTransactions = []
         idTransactions.append(idTrans)
 
+    myJson = []
+    simpleData = []
+    i = 0
     for id in idTransactions:
         sql = """select idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
         message from transactions where idTransactions = %s """
@@ -82,6 +86,8 @@ def getInfoAboutTranscation(idTransactions):
         userData = []
         for row in data:
             userData.append(row)
+            simpleData[i].append(row)
+        i = i + 1
 
         myJson.append({
             'idTransactions ': id,
@@ -93,4 +99,7 @@ def getInfoAboutTranscation(idTransactions):
             'new_balance': userData[5],
             'message': userData[6]
         })
-    return jsonify(myJson)
+    if type == 'JSON':
+        return jsonify(myJson)
+    else:
+        return simpleData
