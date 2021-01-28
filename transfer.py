@@ -14,12 +14,12 @@ def transfer():
     # Rzutowanie numerów kont na int i tytułu na str
     try:
         title = str(request.json['title'])
-        accountNumber = int(request.json['accountNumber'])
-        fromAccount = int((request.json['fromAccount']))
+        toAccountNum = int(request.json['accountNumber'])
+        fromAccountNum = int((request.json['fromAccount']))
     except ValueError:
         return jsonify({'msg': 'Zły tytuł lub numery kont '}), 401
 
-    if accountNumber == fromAccount:
+    if toAccountNum == fromAccountNum:
         return jsonify({'msg': 'Nie można dokonać transakcji między tym samym kontem '}), 401
 
     amount = request.json['amount']
@@ -31,8 +31,8 @@ def transfer():
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
 
     # przypisanie idAccount na podstawie numeru konta
-    senderId = accountNumToAccountID(accountNumber)
-    recipientId = accountNumToAccountID(fromAccount)
+    senderId = accountNumToAccountID(fromAccountNum)
+    recipientId = accountNumToAccountID(toAccountNum)
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
     if len(recipientId) == 0 or len(senderId) == 0:
