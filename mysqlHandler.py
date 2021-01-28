@@ -65,7 +65,7 @@ def accountNumToAccountID(accountNum):
     if len(data) == 0:
         return False
 
-    return data[0]
+    return True, data[0]
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()

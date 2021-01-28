@@ -28,9 +28,9 @@ def transfer():
         if amount <= 0:
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
 
-    if accountNumToAccountID(accountNumber) or accountNumToAccountID(fromAccount):
-        receiverId = accountNumToAccountID(accountNumber)
-        senderId = accountNumToAccountID(fromAccount)
+    if accountNumToAccountID(accountNumber)[0] and accountNumToAccountID(fromAccount)[0]:
+        receiverId = accountNumToAccountID(accountNumber)[1]
+        senderId = accountNumToAccountID(fromAccount)[1]
     else:
         return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
 
