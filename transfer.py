@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, accountNumToAccountID
+from project.mysqlHandler import mysql, isOwner, accountNumToAccountID, getIdsAccountsOfCustomer
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
@@ -19,6 +19,9 @@ def transfer():
     except ValueError:
         return jsonify({'msg': 'Zły tytuł lub numery kont '}), 401
 
+    if accountNumber == fromAccount:
+        return jsonify({'msg': 'Nie można dokonać transakcji między tym samym kontem '}), 401
+
     amount = request.json['amount']
     # sprawdzanie czy kwota ma odpowiedni typ i jest dodatnia
     if not (isinstance(amount, int) or isinstance(amount, float)):
@@ -36,8 +39,8 @@ def transfer():
         return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
-    if senderId != get_jwt_identity():
-        return jsonify({'msg': 'Brak uprawnień do tego konta'}), 401
+    if not isOwner(get_jwt_identity(), senderId):
+        return jsonify({'msg': 'Brak dostępu do tego konta'}), 401
 
     # rozpoczęcie transakcji
     try:
