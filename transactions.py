@@ -66,6 +66,12 @@ def getInfoAboutTranscation(idTransactions):
     myJson = []
     conn = mysql.connect()
     cursor = conn.cursor()
+
+    idTrans = idTransactions
+    if isinstance(idTrans,int):
+        idTransactions = []
+        idTransactions.append(idTrans)
+
     for id in idTransactions:
         sql = """select idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
         message from transactions where idTransactions = %s """
