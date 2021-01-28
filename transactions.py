@@ -49,8 +49,11 @@ def generatePDF():
 
         infoTrans = getInfoAboutTranscation(idTrans, '')
 
+        # TODO dodać samo generowanie pdfa, najlepiej używając pakietu z flaska
+        # TODO wszystko jest w infoTrans, w takiej kolejności jak dodawane są dane
+        # TODO do JSONa z userData w linijce 95 tego programu
 
-        return str(infoTrans[0])
+        return ''
 
 
 def isOwnerOfTransaction(idTransaction):
