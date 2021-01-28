@@ -24,7 +24,9 @@ def transfer():
     # sprawdzanie czy kwota ma odpowiedni typ
     if not (isinstance(amount, int) or isinstance(amount, float)):
         return jsonify({'msg': 'Zły typ kwoty przelewu'}), 401
-
+    else:
+        if amount <= 0:
+            return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
     receiverId = accountNumToAccountID(accountNumber)
     senderId = accountNumToAccountID(fromAccount)
 
