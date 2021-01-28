@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request,session,url_for,Blue
 import jwt, datetime
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token, get_raw_jwt,
-    get_jwt_claims
+    get_jwt_claims, jwt_refresh_token_required, create_refresh_token, get_jwt_identity
 )
 from . import mysql
 from project.jwtHandler import jwt, blacklist
@@ -38,8 +38,11 @@ def loginJWT():
     if password != password_:
         return jsonify({"msg": "Bad username or password"}), 401
 
-    access_token = create_access_token(identity=idCustomers)
-    return jsonify(access_token=access_token), 200
+    ret = {
+        'access_token': create_access_token(identity=idCustomers),
+        'refresh_token': create_refresh_token(identity=idCustomers)
+    }
+    return jsonify(ret), 200
 
 # wylogowywanie
 @loginblueprint.route('/logoutjwt', methods=['DELETE'])
@@ -49,8 +52,24 @@ def logout():
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
 
+@loginblueprint.route('/logoutjwtrefresh', methods=['DELETE'])
+@jwt_refresh_token_required
+def logout2():
+    jti = get_raw_jwt()['jti']
+    blacklist.add(jti)
+    return jsonify({"msg": "Successfully logged out"}), 200
+
 # dodawanie wygasłych tokenów do blacklisty
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
     return jti in blacklist
+
+@loginblueprint.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    current_user = get_jwt_identity()
+    ret = {
+        'access_token': create_access_token(identity=current_user)
+    }
+    return jsonify(ret), 200
