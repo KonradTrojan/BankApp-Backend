@@ -1,8 +1,6 @@
-from flask import Flask, redirect, render_template, request,session,url_for,Blueprint,jsonify,Response,json
-import jwt, datetime
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token, get_raw_jwt,
-    get_jwt_claims, jwt_refresh_token_required, create_refresh_token, get_jwt_identity
+from flask import request,Blueprint,jsonify
+from flask_jwt_extended import (jwt_required, create_access_token, get_raw_jwt,
+     jwt_refresh_token_required, create_refresh_token, get_jwt_identity
 )
 from . import mysql
 from project.jwtHandler import jwt, blacklist

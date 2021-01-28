@@ -18,30 +18,33 @@ def accounts():
 @jwt_required
 def accountsOfCustomer():
     identity = get_jwt_identity()
+    if request.method == 'GET':
+        accountsIDs = getIdsAccountsOfCustomer(identity)
+        # wpisanie do tablicy wszyskich informacji o koncie o danym id
+        myJson = []
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        for id in accountsIDs:
 
-    accountsIDs = getIdsAccountsOfCustomer(identity)
-    # wpisanie do tablicy wszyskich informacji o koncie o danym id
-    myJson = []
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    for id in accountsIDs:
+            sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
+            cursor.execute(sql, [id])
+            data = cursor.fetchone()
 
-        sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
-        cursor.execute(sql, [id])
-        data = cursor.fetchone()
+            userData = []
+            for row in data:
+                userData.append(row)
 
-        userData = []
-        for row in data:
-            userData.append(row)
+            myJson.append({
+                'idAccounts': id,
+                'number': userData[0],
+                'dataOpened': userData[1],
+                'balance': userData[2]
+            })
 
-        myJson.append({
-            'idAccounts': id,
-            'number': userData[0],
-            'dataOpened': userData[1],
-            'balance': userData[2]
-        })
+        return jsonify(myJson)
+    elif request.method == 'POST':
+        return jsonify({'msg': 'Tu jeszcze nic nie ma'}), 200
 
-    return jsonify(myJson)
 
 # TODO poniższe usunąć, gdy nie będzie już potrzebne
 @accountsblueprint.route('/accounts/<int:id>', methods=['GET', 'POST', 'DELETE'])
