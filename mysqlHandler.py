@@ -61,7 +61,7 @@ def accountNumToAccountID(accountNum):
         cursor = conn.cursor()
         sql = """select idAccounts from accounts where number= %s """
         cursor.execute(sql, [accountNum])
-        data = cursor.fetchall()
+        data = cursor.fetchone()
 
         return data[0]
     except IndexError:
