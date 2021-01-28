@@ -22,7 +22,7 @@ def transfer():
         return jsonify({'msg': 'Zły tytuł lub numery kont '}), 401
 
     # sprawdzanie czy kwota ma odpowiedni typ
-    if not (isinstance(amount, int) or isinstance(amount, float)):
+    if not (isinstance(amount, int) and isinstance(amount, float)):
         return jsonify({'msg': 'Zły typ kwot przelewu'}), 401
     else:
         print("nie ok")
