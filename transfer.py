@@ -28,13 +28,13 @@ def transfer():
         if amount <= 0:
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
 
-    if accountNumToAccountID(accountNumber)[0] is True and accountNumToAccountID(fromAccount)[0] is True:
-        receiverId = accountNumToAccountID(accountNumber)[1]
-        senderId = accountNumToAccountID(fromAccount)[1]
-    else:
+
+    receiverId = accountNumToAccountID(accountNumber)[1]
+    senderId = accountNumToAccountID(fromAccount)[1]
+
+    if len(receiverId) == 0 or len(senderId) == 0:
         return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
 
-    # TODO później wciągnąć jakoś ten warunek do commita
 
     try:
         conn = mysql.connect()
