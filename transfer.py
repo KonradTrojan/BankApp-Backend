@@ -40,8 +40,7 @@ def transfer():
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
     if not isOwner(get_jwt_identity(), senderId):
-        return jsonify({'msg': 'Brak dostępu do tego konta', 'sen': senderId, 'rec': recipientId,
-                        'id': get_jwt_identity(), 'from': fromAccountNum, 'to': toAccountNum}), 401
+        return jsonify({'msg': 'Brak dostępu do tego konta'}), 401
 
     # rozpoczęcie transakcji
     try:
