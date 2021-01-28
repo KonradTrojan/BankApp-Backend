@@ -52,12 +52,9 @@ def transfer():
         cursor.rollback()
         return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
     finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
-            return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
-
-    return jsonify({'msg': 'transkacja udana'}), 200
+        cursor.close()
+        conn.close()
+        return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
