@@ -29,6 +29,12 @@ def transactionsOfAccount(idAccount):
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
+@transactionsblueprint.route('/transactions/pdf', methods=['POST'])
+@jwt_required
+def generatePDF():
+    return ''
+
+
 def getInfoAboutTranscation(idTransactions):
     myJson = []
     conn = mysql.connect()

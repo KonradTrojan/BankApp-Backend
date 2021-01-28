@@ -38,11 +38,21 @@ def getIdsCreditCardsOfAccount(idAccount):
 def getIdsTransferOfAccount(idAccount):
     conn = mysql.connect()
     cursor = conn.cursor()
+
+    # transakcje, w której zalogowany jest nadawcą przelewu
     sql = """select idTransactions  from transactions where idAccounts= %s """
     cursor.execute(sql, [idAccount])
     data = cursor.fetchall()
 
     transactionsID = []
+    for row in data:
+        transactionsID.append(row[0])
+
+    # transakcje, w której zalogowany jest odbiorcą przelewu
+    sql = """select idTransactions  from transactions where idAccountsOfRecipient= %s """
+    cursor.execute(sql, [idAccount])
+    data = cursor.fetchall()
+
     for row in data:
         transactionsID.append(row[0])
 
