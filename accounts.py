@@ -14,7 +14,7 @@ def accounts():
     resp = jsonify(data)
     return resp
 
-@accountsblueprint.route('/accounts', methods=['GET'])
+@accountsblueprint.route('/accounts', methods=['GET','DELETE'])
 @jwt_required
 def accountsOfCustomer():
 
