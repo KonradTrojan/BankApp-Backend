@@ -51,32 +51,34 @@ def accountsOfCustomer():
 
         idAccounts = request.json['idAccounts']
 
-        if isinstance(idAccounts, int):
-            if not isOwner(get_jwt_identity(),idAccounts):
-                return jsonify({'msg': 'Brak dostępu'}), 401
+        if not isinstance(idAccounts, int):
+            return jsonify({'msg': 'Zły typ'}), 401
 
-            # rozpoczęcie transakcji
-            try:
-                conn = mysql.connect()
-                cursor = conn.cursor()
+        if not isOwner(get_jwt_identity(),idAccounts):
+            return jsonify({'msg': 'Brak dostępu'}), 401
 
-                # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
-                sql = """DELETE FROM accounts where idAccounts = %s"""
-                cursor.execute(sql, [idAccounts])
+        # rozpoczęcie transakcji
+        try:
+            conn = mysql.connect()
+            cursor = conn.cursor()
 
-                # commit zmian
-                conn.commit()
+            # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
+            sql = """DELETE FROM accounts where idAccounts = %s"""
+            cursor.execute(sql, [idAccounts])
 
-            except mysql.connect.Error as error:
-                # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
-                cursor.rollback()
-                return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
-            finally:
-                cursor.close()
-                conn.close()
-                return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+            # commit zmian
+            conn.commit()
 
-        return jsonify({'msg': 'idAccounts musi być typu int'}), 401
+        except mysql.connect.Error as error:
+            # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
+            cursor.rollback()
+            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+        finally:
+            cursor.close()
+            conn.close()
+            return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+
+
 
 
 # TODO poniższe usunąć, gdy nie będzie już potrzebne
