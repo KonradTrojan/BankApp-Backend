@@ -42,7 +42,12 @@ def accountsOfCustomer():
             })
 
         return jsonify(myJson)
+
     elif request.method == 'Delete':
+
+         if not request.is_json:
+            return jsonify({"msg": "Missing JSON in request"}), 400
+
         idAccounts = request.json['idAccounts']
 
         if not isinstance(idAccounts, int):
@@ -72,7 +77,6 @@ def accountsOfCustomer():
             conn.close()
             return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
 
-        return jsonify({'msg': 'Tu jeszcze nic nie ma'}), 200
 
 
 # TODO poniższe usunąć, gdy nie będzie już potrzebne
