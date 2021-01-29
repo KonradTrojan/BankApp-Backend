@@ -45,14 +45,12 @@ def accountsOfCustomer():
 
     elif request.method == 'DELETE':
 
-         if not request.is_json:
+        if not request.is_json:
             return jsonify({"msg": "Missing JSON in request"}), 400
 
-        idAccounts = request.json['idAccounts']
+    idAccounts = request.json['idAccounts']
 
-        if not isinstance(idAccounts, int):
-            return jsonify({'msg': 'idAccounts musi być typu int'}), 401
-
+    if isinstance(idAccounts, int):
         if not isOwner(get_jwt_identity(),idAccounts):
             return jsonify({'msg': 'Brak dostępu'}), 401
 
@@ -77,6 +75,7 @@ def accountsOfCustomer():
             conn.close()
             return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
 
+    return jsonify({'msg': 'idAccounts musi być typu int'}), 401
 
 
 # TODO poniższe usunąć, gdy nie będzie już potrzebne
