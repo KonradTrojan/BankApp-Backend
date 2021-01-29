@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session, json
-from project.mysqlHandler import mysql, getIdsAccountsOfCustomer
+from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, isOwner
 from datetime import datetime
 from flask_jwt_extended import jwt_required,get_jwt_identity
 
@@ -17,9 +17,9 @@ def accounts():
 @accountsblueprint.route('/accounts', methods=['GET'])
 @jwt_required
 def accountsOfCustomer():
-    identity = get_jwt_identity()
+
     if request.method == 'GET':
-        accountsIDs = getIdsAccountsOfCustomer(identity)
+        accountsIDs = getIdsAccountsOfCustomer(get_jwt_identity())
         # wpisanie do tablicy wszyskich informacji o koncie o danym id
         myJson = []
         conn = mysql.connect()
@@ -42,7 +42,36 @@ def accountsOfCustomer():
             })
 
         return jsonify(myJson)
-    elif request.method == 'POST':
+    elif request.method == 'Delete':
+        idAccounts = request.json['idAccounts']
+
+        if not isinstance(idAccounts, int):
+            return jsonify({'msg': 'idAccounts musi być typu int'}), 401
+
+        if not isOwner(get_jwt_identity(),idAccounts):
+            return jsonify({'msg': 'Brak dostępu'}), 401
+
+        # rozpoczęcie transakcji
+        try:
+            conn = mysql.connect()
+            cursor = conn.cursor()
+
+            # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
+            sql = """DELETE FROM accounts where idAccounts = %s"""
+            cursor.execute(sql, [idAccounts])
+
+            # commit zmian
+            conn.commit()
+
+        except mysql.connect.Error as error:
+            # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
+            cursor.rollback()
+            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+        finally:
+            cursor.close()
+            conn.close()
+            return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+
         return jsonify({'msg': 'Tu jeszcze nic nie ma'}), 200
 
 

@@ -65,6 +65,7 @@ def isOwnerOfTransaction(idTransaction):
                 return True
     return False
 
+
 # funkcja zwraca informacje o podanej transakcji lub liście transakcji
 # type = 0 oznacza że wrócony typ danych to JSON, a 1, że lista
 def getInfoAboutTranscation(idTransactions, type):
