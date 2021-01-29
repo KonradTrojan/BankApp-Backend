@@ -26,7 +26,7 @@ def credit_cards():
 
         idCard = request.json['idCard']
 
-        if isinstance(idCard, int):
+        if not isinstance(idCard, int):
             return jsonify({'msg': 'Zły typ'}), 401
 
         idAcc = getAccountIdOfCard(idCard)
