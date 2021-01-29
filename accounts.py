@@ -43,7 +43,7 @@ def accountsOfCustomer():
 
         return jsonify(myJson)
 
-    elif request.method == 'Delete':
+    elif request.method == 'DELETE':
 
          if not request.is_json:
             return jsonify({"msg": "Missing JSON in request"}), 400
