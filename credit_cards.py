@@ -1,21 +1,63 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, getIdsCreditCardsOfAccount, isOwner
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
 
 # wszystkie karty przypisane do danego użytkownika
-@credit_cardsblueprint.route('/credit_cards', methods=['GET'])
+@credit_cardsblueprint.route('/credit_cards', methods=['GET','DELETE'])
 @jwt_required
 def credit_cards():
-    identity = get_jwt_identity()
-    accountsIDs = getIdsAccountsOfCustomer(identity)
+    if request.method == 'GET':
 
-    idCards = []
-    for id in accountsIDs:
-        idCards = idCards + getIdsCreditCardsOfAccount(id)
+        accountsIDs = getIdsAccountsOfCustomer(get_jwt_identity())
 
-    return getInfoAboutCards(idCards)
+        idCards = []
+        for id in accountsIDs:
+            idCards = idCards + getIdsCreditCardsOfAccount(id)
+
+        return getInfoAboutCards(idCards)
+
+    # Usuwanie karty
+    elif request.method == 'DELETE':
+
+        if not request.is_json:
+            return jsonify({"msg": "Missing JSON in request"}), 400
+
+        idCard = request.json['idCard']
+
+        if isinstance(idCard, int):
+            return jsonify({'msg': 'Zły typ'}), 401
+
+        idAcc = getAccountIdOfCard(idCard)
+
+        if not isinstance(idAcc, int):
+            return jsonify({"msg": "Błędne id karty"}), 401
+
+        if not isOwner(get_jwt_identity(), idAcc):
+            return jsonify({"msg": "Brak dostępu"}), 401
+
+        # rozpoczęcie transakcji
+        try:
+            conn = mysql.connect()
+            cursor = conn.cursor()
+
+            # Usuwanie karty z bd
+            sql = """DELETE FROM credit_cards where idCreditCards = %s"""
+            cursor.execute(sql, [idCard])
+
+            # commit zmian
+            conn.commit()
+
+        except mysql.connect.Error as error:
+            # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
+            cursor.rollback()
+            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+        finally:
+            cursor.close()
+            conn.close()
+            return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+
 
 # wszystkie karty przypisane do danego konta
 @credit_cardsblueprint.route('/credit_cards/<int:idAccount>', methods=['GET'])
@@ -26,6 +68,18 @@ def creditCardsOfAccount(idAccount):
         return getInfoAboutCards(idCards)
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
+
+
+def getAccountIdOfCard(idCreditCard):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    sql = """select idAccounts from credit_cards where idCreditCards= %s """
+    cursor.execute(sql, [idCreditCard])
+    data = cursor.fetchone()
+
+    return data[0]
+
 
 def getInfoAboutCards(idCards):
     myJson = []

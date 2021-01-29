@@ -44,7 +44,7 @@ def generatePDF():
         idTrans = request.json['idTransactions']
 
         # sprawdzanie czy transakcja należy do konta zalogowanego użytkownika
-        if not isOwnerOfTransaction(idTrans):
+        if not isAccountOfTransaction(idTrans):
             return jsonify({"msg": "Brak dostępu do tej transakcji"}), 400
 
         infoTrans = getInfoAboutTranscation(idTrans, '')
@@ -56,7 +56,7 @@ def generatePDF():
         return ''
 
 
-def isOwnerOfTransaction(idTransaction):
+def isAccountOfTransaction(idTransaction):
 
     accountsList = getIdsAccountsOfCustomer(get_jwt_identity())
     for idAcc in accountsList:
