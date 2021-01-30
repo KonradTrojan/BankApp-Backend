@@ -73,7 +73,7 @@ def credit_cards():
             cursor = conn.cursor()
 
             # Dodawanie karty do bd
-            sql = """INSERT INTO credit_cards (maximumLimit, expiredDate, idAccounts ) VALUES (%s, %s, %s)"""
+            sql = """INSERT INTO credit_cards (maximumLimit, expiryDate, idAccounts ) VALUES (%s, %s, %s)"""
             cursor.execute(sql, [5000, datetime.datetime.now() + datetime.timedelta(days=2*365), idAcc])
 
             # commit zmian
