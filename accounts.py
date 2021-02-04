@@ -14,7 +14,7 @@ def accounts():
     resp = jsonify(data)
     return resp
 
-@accountsblueprint.route('/accounts', methods=['GET','DELETE'])
+@accountsblueprint.route('/accounts', methods=['GET','DELETE','POST'])
 @jwt_required
 def accountsOfCustomer():
 
@@ -78,7 +78,31 @@ def accountsOfCustomer():
             conn.close()
             return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
 
+    elif request.method == 'POST':
 
+        if not request.is_json:
+            return jsonify({"msg": "Missing JSON in request"}), 400
+
+        # rozpoczęcie transakcji
+        try:
+            conn = mysql.connect()
+            cursor = conn.cursor()
+
+            # Dodawanie karty do bd
+            sql = """INSERT INTO owners (idCustomers) VALUES (%s)"""
+            cursor.execute(sql, [get_jwt_identity()])
+
+            # commit zmian
+            conn.commit()
+
+        except mysql.connect.Error as error:
+            # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
+            cursor.rollback()
+            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+        finally:
+            cursor.close()
+            conn.close()
+            return jsonify({'msg': "Konto dodane pomyślnie"}), 200
 
 
 # TODO poniższe usunąć, gdy nie będzie już potrzebne
