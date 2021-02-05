@@ -93,7 +93,9 @@ def accountsOfCustomer():
             sql = """INSERT INTO owners (idCustomers) VALUES (%s)"""
             cursor.execute(sql, [get_jwt_identity()])
             # commit zmian
+            conn.commit()
 
+            cursor = conn.cursor()
             # Dodawanie karty do bd
             sql = """UPDATE accounts SET dataOpened = %s WHERE dataOpened is NULL"""
             cursor.execute(sql, [datetime.now(), 0])
