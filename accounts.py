@@ -78,6 +78,7 @@ def accountsOfCustomer():
             conn.close()
             return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
 
+    # Dodawanie kont
     elif request.method == 'POST':
 
         if not request.is_json:
@@ -89,11 +90,21 @@ def accountsOfCustomer():
             cursor = conn.cursor()
 
             # Dodawanie karty do bd
+            sql = """INSERT INTO accounts (dataOpened,balance) VALUES (%s, %s)"""
+            cursor.execute(sql, [datetime.now(), 0])
+
+            # commit zmian
+            conn.commit()
+
+            # Dodawanie karty do bd
             sql = """INSERT INTO owners (idCustomers) VALUES (%s)"""
             cursor.execute(sql, [get_jwt_identity()])
 
             # commit zmian
             conn.commit()
+
+
+
 
         except mysql.connect.Error as error:
             # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
