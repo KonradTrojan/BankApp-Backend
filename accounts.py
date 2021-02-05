@@ -97,7 +97,7 @@ def accountsOfCustomer():
 
             cursor = conn.cursor()
             # Dodawanie karty do bd
-            sql = """UPDATE accounts SET dataOpened = %s"""
+            sql = """UPDATE accounts SET dataOpened = %s WHERE dataOpened is NULL"""
             cursor.execute(sql, [datetime.now(), 0])
             # commit zmian
             conn.commit()
