@@ -4,6 +4,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
 
+conn = mysql.connect()
+cursor = conn.cursor()
+
 @transferBlueprint.route("/transfer",methods=['POST'])
 @jwt_required
 def transfer():
@@ -44,7 +47,7 @@ def transfer():
 
     # rozpoczęcie transakcji
     try:
-        conn = mysql.connect()
+
         cursor = conn.cursor()
 
         # sprawdzenie czy na kocie jest wystarczająco pięniędzy
@@ -78,8 +81,7 @@ def transfer():
         return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
 
 def hasMoney(accountsId, amount):
-    conn = mysql.connect()
-    cursor = conn.cursor()
+
     sql = """select balance from accounts where idAccounts = %s """
     cursor.execute(sql, [accountsId])
     data = cursor.fetchone()

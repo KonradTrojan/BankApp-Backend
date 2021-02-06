@@ -99,7 +99,7 @@ def creditCardsOfAccount(idAccount):
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
-@credit_cardsblueprint.route('/credit_cards/balance', methods=['GET'])
+@credit_cardsblueprint.route('/credit_cards/balance', methods=['POST'])
 @jwt_required
 def balance():
     if not is_input_json(request, ['idCard', 'balance']):
