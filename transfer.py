@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, accountNumToAccountID, get_active_idAccounts_Of_Customer
+from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
@@ -31,8 +31,8 @@ def transfer():
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
 
     # przypisanie idAccount na podstawie numeru konta
-    senderId = accountNumToAccountID(fromAccountNum)
-    recipientId = accountNumToAccountID(toAccountNum)
+    senderId = account_number_to_idAccounts(fromAccountNum)
+    recipientId = account_number_to_idAccounts(toAccountNum)
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
     if recipientId is None or senderId is None:

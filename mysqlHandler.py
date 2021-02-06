@@ -33,7 +33,7 @@ def get_all_idAccounts_of_Customer(idCustomer):
 
 
 # zwraca listę wszystkich kart przypisanych do danego idAccount
-def getIdsCreditCardsOfAccount(idAccount):
+def get_idCreditCards_of_Account(idAccount):
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idCreditCards from credit_cards where idAccounts= %s """
@@ -49,7 +49,7 @@ def getIdsCreditCardsOfAccount(idAccount):
 
 
 # zwraca listę wszystkich transakcji przypisanych do danego idAccount
-def getIdsTransferOfAccount(idAccount):
+def get_idTransfers_of_Account(idAccount):
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -79,7 +79,7 @@ def isOwner(identity, idAcounts):
             return True
     return False
 
-def accountNumToAccountID(accountNum):
+def account_number_to_idAccounts(accountNum):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()

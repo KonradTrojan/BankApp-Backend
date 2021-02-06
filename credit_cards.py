@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, getIdsCreditCardsOfAccount, isOwner
+from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, get_idCreditCards_of_Account, isOwner
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 
@@ -13,7 +13,7 @@ def credit_cards():
         accountsIDs = get_active_idAccounts_Of_Customer(get_jwt_identity())
         idCards = []
         for id in accountsIDs:
-            idCards = idCards + getIdsCreditCardsOfAccount(id)
+            idCards = idCards + get_idCreditCards_of_Account(id)
 
         return getInfoAboutCards(idCards)
 
@@ -94,7 +94,7 @@ def credit_cards():
 @jwt_required
 def creditCardsOfAccount(idAccount):
     if isOwner(get_jwt_identity(), idAccount):
-        idCards = getIdsCreditCardsOfAccount(idAccount)
+        idCards = get_idCreditCards_of_Account(idAccount)
         return getInfoAboutCards(idCards)
     else:
         return jsonify({"msg": "Brak dostępu"}), 401

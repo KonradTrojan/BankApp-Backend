@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, getIdsTransferOfAccount, get_all_idAccounts_of_Customer
+from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
@@ -14,7 +14,7 @@ def transactions():
 
     transactionsId = []
     for id in idAccounts:
-        transactionsId = transactionsId + getIdsTransferOfAccount(id)
+        transactionsId = transactionsId + get_idTransfers_of_Account(id)
 
     return getInfoAboutTranscation(transactionsId, 'JSON')
 
@@ -25,7 +25,7 @@ def transactions():
 @jwt_required
 def transactionsOfAccount(idAccount):
     if isOwner(get_jwt_identity(), idAccount):
-        idTransactions = getIdsTransferOfAccount(idAccount)
+        idTransactions = get_idTransfers_of_Account(idAccount)
         return getInfoAboutTranscation(idTransactions, 'JSON')
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
@@ -61,7 +61,7 @@ def isAccountOfTransaction(idTransaction):
 
     accountsList = get_active_idAccounts_Of_Customer(get_jwt_identity())
     for idAcc in accountsList:
-        for idTran in getIdsTransferOfAccount(idAcc):
+        for idTran in get_idTransfers_of_Account(idAcc):
             if idTran == idTransaction:
                 return True
     return False
