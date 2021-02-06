@@ -3,16 +3,6 @@ from flaskext.mysql import MySQL
 from flask import jsonify
 mysql = MySQL()
 
-def check_input_json(req, jsonTable):
-    if not req.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-
-    for jsonName in jsonTable:
-        input = req.json.get(jsonName, None)
-        if not input:
-            return jsonify({"msg": "Bad json input"}), 400
-
-    return True
 
 # zwraca listę wszystkich kont przypisanych do danego idCustomer
 def get_active_idAccounts_Of_Customer(idCustomer):
@@ -101,7 +91,7 @@ def account_number_to_idAccounts(accountNum):
 
         # TODO dodać sprawdzanie czy ten obiekt istnieje
         return data[0]
-    except IndexError:
+    except NoneType:
         return None
 
 
