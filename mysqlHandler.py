@@ -99,11 +99,13 @@ def account_number_to_idAccounts(accountNum):
         cursor.execute(sql, [accountNum])
         data = cursor.fetchone()
 
-        return data[0]
+        if data[0] is None:
+            return None
+        else:
+            return data[0]
     except IndexError:
         return None
-    except NoneType:
-        return None
+
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
