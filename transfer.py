@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, conn, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer,is_input_json
+from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer,is_input_json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
 
-#conn = mysql.connect()
-#cursor = conn.cursor()
+conn = mysql.connect()
+cursor = conn.cursor()
 
 @transferBlueprint.route("/transfer",methods=['POST'])
 @jwt_required

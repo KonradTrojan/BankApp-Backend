@@ -2,7 +2,7 @@ from MySQLdb.converters import NoneType
 from flaskext.mysql import MySQL
 from flask import jsonify
 mysql = MySQL()
-conn= mysql.connect()
+#conn= mysql.connect()
 
 
 #
