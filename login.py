@@ -4,7 +4,7 @@ from flask_jwt_extended import (jwt_required, create_access_token, get_raw_jwt,
 )
 from . import mysql
 from project.jwtHandler import jwt, blacklist
-from projext.mysqlHandler import is_input_json
+from project.mysqlHandler import is_input_json
 
 loginblueprint = Blueprint('loginblueprint', __name__)
 @loginblueprint.route("/loginjwt", methods = ['POST'])
