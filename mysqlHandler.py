@@ -91,7 +91,7 @@ def account_number_to_idAccounts(accountNum):
 
         # TODO dodać sprawdzanie czy ten obiekt istnieje
         return data[0]
-    except NoneType:
+    except TypeError:
         return None
 
 
