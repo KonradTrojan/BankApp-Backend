@@ -2,32 +2,24 @@ from flask import Blueprint, jsonify, request, session, json
 from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, isOwner, is_input_json
 from datetime import datetime
 from flask_jwt_extended import jwt_required,get_jwt_identity
-import time
+
 accountsblueprint = Blueprint('accountsblueprint', __name__)
 
-@accountsblueprint.route('/allaccounts')
-def accounts():
-    cursor = mysql.get_db().cursor()
-    sql = """select * from accounts"""
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    resp = jsonify(data)
-    return resp
 
-@accountsblueprint.route('/accounts', methods=['GET','DELETE','POST'])
+@accountsblueprint.route('/accounts', methods=['GET', 'DELETE', 'POST'])
 @jwt_required
 def accountsOfCustomer():
-
+    conn = mysql.connect()
+    cursor = conn.cursor()
     if request.method == 'GET':
-        accountsIDs = get_active_idAccounts_Of_Customer(get_jwt_identity())
         # wpisanie do tablicy wszyskich informacji o koncie o danym id
+        accountsIDs = get_active_idAccounts_Of_Customer(get_jwt_identity())
         myJson = []
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        for id in accountsIDs:
+
+        for idAcc in accountsIDs:
 
             sql = """select number, dataOpened, balance from accounts where idAccounts= %s """
-            cursor.execute(sql, [id])
+            cursor.execute(sql, [idAcc])
             data = cursor.fetchone()
 
             userData = []
@@ -35,7 +27,7 @@ def accountsOfCustomer():
                 userData.append(row)
 
             myJson.append({
-                'idAccounts': id,
+                'idAccounts': idAcc,
                 'number': userData[0],
                 'dataOpened': userData[1],
                 'balance': userData[2]
@@ -59,8 +51,6 @@ def accountsOfCustomer():
 
         # rozpoczęcie transakcji
         try:
-            conn = mysql.connect()
-            cursor = conn.cursor()
 
             # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
             sql = """DELETE FROM accounts where idAccounts = %s"""
@@ -83,8 +73,6 @@ def accountsOfCustomer():
 
         # rozpoczęcie transakcji
         try:
-            conn = mysql.connect()
-            cursor = conn.cursor()
 
             # Dodawanie karty do bd
             sql = """INSERT INTO owners (idCustomers) VALUES (%s)"""
