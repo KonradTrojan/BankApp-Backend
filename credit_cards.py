@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, getIdsCreditCardsOfAccount, isOwner
+from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, getIdsCreditCardsOfAccount, isOwner
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 
@@ -10,7 +10,7 @@ credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
 @jwt_required
 def credit_cards():
     if request.method == 'GET':
-        accountsIDs = getIdsAccountsOfCustomer(get_jwt_identity())
+        accountsIDs = get_active_idAccounts_Of_Customer(get_jwt_identity())
         idCards = []
         for id in accountsIDs:
             idCards = idCards + getIdsCreditCardsOfAccount(id)

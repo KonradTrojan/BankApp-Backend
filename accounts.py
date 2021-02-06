@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session, json
-from project.mysqlHandler import mysql, getIdsAccountsOfCustomer, isOwner
+from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, isOwner
 from datetime import datetime
 from flask_jwt_extended import jwt_required,get_jwt_identity
 import time
@@ -19,7 +19,7 @@ def accounts():
 def accountsOfCustomer():
 
     if request.method == 'GET':
-        accountsIDs = getIdsAccountsOfCustomer(get_jwt_identity())
+        accountsIDs = get_active_idAccounts_Of_Customer(get_jwt_identity())
         # wpisanie do tablicy wszyskich informacji o koncie o danym id
         myJson = []
         conn = mysql.connect()
@@ -111,41 +111,4 @@ def accountsOfCustomer():
             conn.close()
             return jsonify({'msg': "Konto dodane pomyślnie"}), 200
 
-
-# TODO poniższe usunąć, gdy nie będzie już potrzebne
-@accountsblueprint.route('/accounts/<int:id>', methods=['GET', 'POST', 'DELETE'])
-def accountsForId(id):
-    conn = mysql.connect()
-    if request.method == 'POST' and 'balance' in request.json:
-        # name = request.form['name']
-        name = "xxxxxxxxxxxx"
-        now = datetime.today()
-        balance = request.json['balance']
-        cursor = conn.cursor()
-        sql = """INSERT INTO accounts (balance, dataOpened, name) VALUES ('%s', '%s', '%s')"""
-        cursor.execute(sql, [balance, now, name])
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return  json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
-    if request.method == 'DELETE':
-        cursor = conn.cursor()
-        sql = """SELECT idAccounts FROM owners WHERE idCustomers = '%s'"""
-        cursor.execute(sql, [session['userId']])
-        data = cursor.fetchone()
-        idAccounts = data[0]
-        sql = """DELETE FROM accounts WHERE idAccounts = '%s'"""
-        cursor.execute(sql, [idAccounts])
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
-    else:
-        cursor = mysql.get_db().cursor()
-        sql = """select * from accounts where idAccounts= '%s'"""
-        cursor.execute(sql, id)
-        data = cursor.fetchall()
-        resp = jsonify(data)
-        conn.close()
-        return resp
 

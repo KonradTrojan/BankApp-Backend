@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, getIdsAccountsOfCustomer, getIdsTransferOfAccount
+from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, getIdsTransferOfAccount, get_all_idAccounts_of_Customer
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
@@ -9,8 +9,8 @@ transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 @transactionsblueprint.route('/transactions')
 @jwt_required
 def transactions():
-    identity = get_jwt_identity()
-    idAccounts = getIdsAccountsOfCustomer(identity)
+
+    idAccounts = get_all_idAccounts_of_Customer(get_jwt_identity())
 
     transactionsId = []
     for id in idAccounts:
@@ -20,10 +20,11 @@ def transactions():
 
 
 # wyświetla wszystkie transakcje na koncie o podanym idAccount
+# TODO sprawdzić, czy potrzebne, jeśli tak to zmienić pobieranie danych z tablicy owners na allOwners
 @transactionsblueprint.route('/transactions/<int:idAccount>', methods=['GET'])
 @jwt_required
 def transactionsOfAccount(idAccount):
-    if isOwner(get_jwt_identity(),idAccount):
+    if isOwner(get_jwt_identity(), idAccount):
         idTransactions = getIdsTransferOfAccount(idAccount)
         return getInfoAboutTranscation(idTransactions, 'JSON')
     else:
@@ -58,7 +59,7 @@ def generatePDF():
 
 def isAccountOfTransaction(idTransaction):
 
-    accountsList = getIdsAccountsOfCustomer(get_jwt_identity())
+    accountsList = get_active_idAccounts_Of_Customer(get_jwt_identity())
     for idAcc in accountsList:
         for idTran in getIdsTransferOfAccount(idAcc):
             if idTran == idTransaction:

@@ -3,10 +3,24 @@ from flask import jsonify
 mysql = MySQL()
 
 # zwraca listę wszystkich kont przypisanych do danego idCustomer
-def getIdsAccountsOfCustomer(idCustomer):
+def get_active_idAccounts_Of_Customer(idCustomer):
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """select idAccounts from owners where idCustomers= %s """
+    cursor.execute(sql, [idCustomer])
+    data = cursor.fetchall()
+
+    # wpisanie do tablicy id wszystkich kont zalogowanego użytkownika
+    accountsIDs = []
+    for row in data:
+        accountsIDs.append(row[0])
+
+    return accountsIDs
+
+def get_all_idAccounts_of_Customer(idCustomer):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """select idAccounts from allOwners where idCustomers= %s """
     cursor.execute(sql, [idCustomer])
     data = cursor.fetchall()
 
@@ -60,7 +74,7 @@ def getIdsTransferOfAccount(idAccount):
 
 # funkcja zwraca True jeśli podane konto należy do zalogowanego użytkownika
 def isOwner(identity, idAcounts):
-    for id in getIdsAccountsOfCustomer(identity):
+    for id in get_active_idAccounts_Of_Customer(identity):
         if id == idAcounts:
             return True
     return False
