@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, get_idCreditCards_of_Account, isOwner
+from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, get_idCreditCards_of_Account, isOwner, is_input_json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 
@@ -20,7 +20,7 @@ def credit_cards():
     # Usuwanie karty
     elif request.method == 'DELETE':
 
-        if not request.is_json:
+        if not is_input_json(request, ['idCard']):
             return jsonify({"msg": "Missing JSON in request"}), 400
 
         idCard = request.json['idCard']
@@ -59,7 +59,7 @@ def credit_cards():
 
     elif request.method == 'POST':
 
-        if not request.is_json:
+        if not is_input_json(request, ['idAccount']):
             return jsonify({"msg": "Missing JSON in request"}), 400
 
         idAcc = request.json['idAccount']

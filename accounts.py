@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session, json
-from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, isOwner
+from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, isOwner, is_input_json
 from datetime import datetime
 from flask_jwt_extended import jwt_required,get_jwt_identity
 import time
@@ -46,7 +46,7 @@ def accountsOfCustomer():
     # Usuwanie konta
     elif request.method == 'DELETE':
 
-        if not request.is_json:
+        if not is_input_json(request, ['idAccounts']):
             return jsonify({"msg": "Missing JSON in request"}), 400
 
         idAccounts = request.json['idAccounts']
@@ -80,9 +80,6 @@ def accountsOfCustomer():
 
     # Dodawanie kont
     elif request.method == 'POST':
-
-        if not request.is_json:
-            return jsonify({"msg": "Missing JSON in request"}), 400
 
         # rozpoczęcie transakcji
         try:
