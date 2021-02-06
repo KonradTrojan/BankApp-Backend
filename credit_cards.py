@@ -99,6 +99,48 @@ def creditCardsOfAccount(idAccount):
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
+@credit_cardsblueprint.route('/credit_cards/balance', methods=['GET'])
+@jwt_required
+def balance():
+    if not is_input_json(request, ['idCard', 'balance']):
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    idCard = request.json['idCard']
+    balance = request.json['balance']
+
+    if not isinstance(idCard, int):
+        return jsonify({'msg': 'Zły typ'}), 401
+
+    idAcc = getAccountIdOfCard(idCard)
+
+    if not isinstance(idAcc, int):
+        return jsonify({"msg": "Nie ma takiej karty"}), 401
+
+    if not isOwner(get_jwt_identity(), idAcc):
+        return jsonify({"msg": "Brak dostępu"}), 401
+
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # Dodawanie karty do bd
+        sql = """UPDATE credit_cards SET balance = %s WHERE idCreditCards = %s"""
+        cursor.execute(sql, [balance, idCard])
+
+        # commit zmian
+        conn.commit()
+
+    except mysql.connect.Error as error:
+        # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
+        cursor.rollback()
+        return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+    finally:
+        cursor.close()
+        conn.close()
+        return jsonify({'msg': "Karta dodane pomyślnie"}), 200
+
+
+
 
 def getAccountIdOfCard(idCreditCard):
     conn = mysql.connect()
