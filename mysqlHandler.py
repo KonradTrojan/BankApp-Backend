@@ -4,6 +4,17 @@ from flask import jsonify
 mysql = MySQL()
 
 
+#
+def is_input_json(req, jsonNames):
+    if not req.is_json:
+        return False
+    try:
+        for name in jsonNames:
+            chceck = req.json[name]
+        return True
+    except KeyError:
+        return False
+
 # zwraca listę wszystkich kont przypisanych do danego idCustomer
 def get_active_idAccounts_Of_Customer(idCustomer):
     conn = mysql.connect()
@@ -89,7 +100,6 @@ def account_number_to_idAccounts(accountNum):
         cursor.execute(sql, [accountNum])
         data = cursor.fetchone()
 
-        # TODO dodać sprawdzanie czy ten obiekt istnieje
         return data[0]
     except TypeError:
         return None
