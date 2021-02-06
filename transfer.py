@@ -65,7 +65,6 @@ def transfer():
         old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, balance, balance-amount, title, None])
 
-        # commit zmian
         conn.commit()
 
     except mysql.connect.Error as error:

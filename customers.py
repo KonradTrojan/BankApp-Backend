@@ -1,18 +1,9 @@
-from flask import Blueprint, jsonify, request, json
+from flask import Blueprint, jsonify, request
 from . import mysql
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 customersblueprint = Blueprint('customersblueprint', __name__)
 
-# TODO /customers należy usunąć, chyba że dodajemy tryb administratora
-@customersblueprint.route('/customers')
-def customers():
-    cursor = mysql.get_db().cursor()
-    sql = "select * from customers"
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    resp = jsonify(data)
-    return resp
 
 @customersblueprint.route('/customer', methods=['GET'])
 @jwt_required
@@ -21,11 +12,10 @@ def customer():
     if request.method == 'GET':
 
         # połączenie z BD
-        identity = get_jwt_identity()
         conn = mysql.connect()
         cursor = conn.cursor()
         sql = """select login, firstName, lastName, email, phone, dateBecomeCustomer from customers where idCustomers= %s """
-        cursor.execute(sql, [identity])
+        cursor.execute(sql, [get_jwt_identity()])
         data = cursor.fetchone()
 
         # wpisanie do tablicy wszystkich infromacji o zalogowanym użutkowniku

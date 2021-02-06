@@ -7,12 +7,14 @@ from project.jwtHandler import jwt, blacklist
 from project.mysqlHandler import is_input_json
 
 loginblueprint = Blueprint('loginblueprint', __name__)
+
+
 @loginblueprint.route("/loginjwt", methods = ['POST'])
 def loginJWT():
+    # sprawdzanie danych wejściowych
     if not is_input_json(request, ['username', 'password']):
         return jsonify({"msg": "Missing JSON in request"}), 400
 
-    # sprawdzanie danych wejściowych
     username = request.json.get('username', None)
     password = request.json.get('password', None)
 
@@ -47,6 +49,7 @@ def logout():
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
 
+
 @loginblueprint.route('/logoutjwtrefresh', methods=['DELETE'])
 @jwt_refresh_token_required
 def logout2():
@@ -54,11 +57,13 @@ def logout2():
     blacklist.add(jti)
     return jsonify({"msg": "Successfully logged out"}), 200
 
+
 # dodawanie wygasłych tokenów do blacklisty
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
     return jti in blacklist
+
 
 @loginblueprint.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required

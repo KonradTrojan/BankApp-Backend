@@ -9,13 +9,16 @@ credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
 @credit_cardsblueprint.route('/credit_cards', methods=['GET','DELETE','POST'])
 @jwt_required
 def credit_cards():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
     if request.method == 'GET':
         accountsIDs = get_active_idAccounts_Of_Customer(get_jwt_identity())
         idCards = []
         for id in accountsIDs:
             idCards = idCards + get_idCreditCards_of_Account(id)
 
-        return getInfoAboutCards(idCards)
+        return get_info_about_cards(idCards)
 
     # Usuwanie karty
     elif request.method == 'DELETE':
@@ -28,7 +31,7 @@ def credit_cards():
         if not isinstance(idCard, int):
             return jsonify({'msg': 'Zły typ'}), 401
 
-        idAcc = getAccountIdOfCard(idCard)
+        idAcc = get_account_of_idCreditCards(idCard)
 
         if not isinstance(idAcc, int):
             return jsonify({"msg": "Nie ma takiej karty"}), 401
@@ -38,8 +41,6 @@ def credit_cards():
 
         # rozpoczęcie transakcji
         try:
-            conn = mysql.connect()
-            cursor = conn.cursor()
 
             # Usuwanie karty z bd
             sql = """DELETE FROM credit_cards where idCreditCards = %s"""
@@ -69,8 +70,6 @@ def credit_cards():
 
         # rozpoczęcie transakcji
         try:
-            conn = mysql.connect()
-            cursor = conn.cursor()
 
             # Dodawanie karty do bd
             sql = """INSERT INTO credit_cards (maximumLimit, expiryDate, idAccounts ) VALUES (%s, %s, %s)"""
@@ -95,10 +94,12 @@ def credit_cards():
 def creditCardsOfAccount(idAccount):
     if isOwner(get_jwt_identity(), idAccount):
         idCards = get_idCreditCards_of_Account(idAccount)
-        return getInfoAboutCards(idCards)
+        return get_info_about_cards(idCards)
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
+
+# zmiana limitu kart
 @credit_cardsblueprint.route('/credit_cards/balance', methods=['POST'])
 @jwt_required
 def balance():
@@ -111,7 +112,13 @@ def balance():
     if not isinstance(idCard, int):
         return jsonify({'msg': 'Zły typ'}), 401
 
-    idAcc = getAccountIdOfCard(idCard)
+    if not (isinstance(balance, int) or isinstance(balance, float)):
+        return jsonify({'msg': 'Zły typ '}), 401
+
+    if balance <= 0:
+        return jsonify({'msg': 'Limit musu być dodatni'}), 401
+
+    idAcc = get_account_of_idCreditCards(idCard)
 
     if not isinstance(idAcc, int):
         return jsonify({"msg": "Nie ma takiej karty"}), 401
@@ -140,9 +147,7 @@ def balance():
         return jsonify({'msg': "Karta dodane pomyślnie"}), 200
 
 
-
-
-def getAccountIdOfCard(idCreditCard):
+def get_account_of_idCreditCards(idCreditCard):
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -153,7 +158,7 @@ def getAccountIdOfCard(idCreditCard):
     return data[0]
 
 
-def getInfoAboutCards(idCards):
+def get_info_about_cards(idCards):
     myJson = []
     conn = mysql.connect()
     cursor = conn.cursor()

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer
+from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
@@ -13,10 +13,10 @@ def transactions():
     idAccounts = get_all_idAccounts_of_Customer(get_jwt_identity())
 
     transactionsId = []
-    for id in idAccounts:
-        transactionsId = transactionsId + get_idTransfers_of_Account(id)
+    for idAcc in idAccounts:
+        transactionsId = transactionsId + get_idTransfers_of_Account(idAcc)
 
-    return getInfoAboutTranscation(transactionsId, 'JSON')
+    return get_info_about_transcation(transactionsId, 'JSON')
 
 
 # wyświetla wszystkie transakcje na koncie o podanym idAccount
@@ -26,7 +26,7 @@ def transactions():
 def transactionsOfAccount(idAccount):
     if isOwner(get_jwt_identity(), idAccount):
         idTransactions = get_idTransfers_of_Account(idAccount)
-        return getInfoAboutTranscation(idTransactions, 'JSON')
+        return get_info_about_transcation(idTransactions, 'JSON')
     else:
         return jsonify({"msg": "Brak dostępu"}), 401
 
@@ -36,7 +36,7 @@ def transactionsOfAccount(idAccount):
 @jwt_required
 def generatePDF():
     if request.method == 'POST':
-        if not request.is_json:
+        if not is_input_json(request, ['idTransactions']):
             return jsonify({"msg": "Missing JSON in request"}), 400
 
         if not isinstance(request.json['idTransactions'], int):
@@ -45,10 +45,10 @@ def generatePDF():
         idTrans = request.json['idTransactions']
 
         # sprawdzanie czy transakcja należy do konta zalogowanego użytkownika
-        if not isAccountOfTransaction(idTrans):
+        if not is_account_of_transaction(idTrans):
             return jsonify({"msg": "Brak dostępu do tej transakcji"}), 400
 
-        infoTrans = getInfoAboutTranscation(idTrans, '')
+        infoTrans = get_info_about_transcation(idTrans, '')
 
         # TODO dodać samo generowanie pdfa, najlepiej używając pakietu z flaska
         # TODO wszystko jest w infoTrans, w takiej kolejności jak dodawane są dane
@@ -57,7 +57,7 @@ def generatePDF():
         return ''
 
 
-def isAccountOfTransaction(idTransaction):
+def is_account_of_transaction(idTransaction):
 
     accountsList = get_active_idAccounts_Of_Customer(get_jwt_identity())
     for idAcc in accountsList:
@@ -68,14 +68,14 @@ def isAccountOfTransaction(idTransaction):
 
 
 # funkcja zwraca informacje o podanej transakcji lub liście transakcji
-# type = 0 oznacza że wrócony typ danych to JSON, a 1, że lista
-def getInfoAboutTranscation(idTransactions, type):
+# type = 'JSON' oznacza że zwrócony typ danych to JSON, a '', że lista
+def get_info_about_transcation(idTransactions, type):
     conn = mysql.connect()
     cursor = conn.cursor()
 
     # spradzanie czy na wejściu jest int czy lista
     idTrans = idTransactions
-    if isinstance(idTrans,int):
+    if isinstance(idTrans, int):
         idTransactions = []
         idTransactions.append(idTrans)
 
