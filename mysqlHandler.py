@@ -1,3 +1,4 @@
+from MySQLdb.converters import NoneType
 from flaskext.mysql import MySQL
 from flask import jsonify
 mysql = MySQL()
@@ -100,6 +101,8 @@ def account_number_to_idAccounts(accountNum):
 
         return data[0]
     except IndexError:
+        return None
+    except NoneType:
         return None
 
 def hasMoney(accountsId, amount):
