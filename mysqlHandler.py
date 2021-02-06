@@ -99,7 +99,7 @@ def account_number_to_idAccounts(accountNum):
         cursor.execute(sql, [accountNum])
         data = cursor.fetchone()
 
-        if data[0] is NoneType:
+        if len(data[0]) == 0:
             return None
         else:
             return data[0]
