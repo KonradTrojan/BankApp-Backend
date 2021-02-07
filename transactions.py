@@ -7,7 +7,7 @@ import pdfkit
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
 # wyświetla wszystkie transakcje danego użytkownika
-@transactionsblueprint.route('/transactions')
+@transactionsblueprint.route('/transactions', methods=['GET'])
 @jwt_required
 def transactionsFilter():
 
