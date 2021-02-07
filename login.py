@@ -5,6 +5,7 @@ from flask_jwt_extended import (jwt_required, create_access_token, get_raw_jwt,
 from . import mysql
 from project.jwtHandler import jwt, blacklist
 from project.mysqlHandler import is_input_json
+from passlib.hash import pbkdf2_sha256 as sha256
 
 loginblueprint = Blueprint('loginblueprint', __name__)
 
@@ -25,14 +26,14 @@ def loginJWT():
 
     data = cursor.fetchone()
     try:
-        password_ = data[0]
+        hash_ = data[0]
         idCustomers = data[1]
     except TypeError:
         return jsonify({"msg": "Błędny login lub hasło"}), 401
 
     # hashowanie i porównanie haseł
     # TODO dodać hashowanie
-    if password != password_:
+    if !sha256.verify(password, hash_):
         return jsonify({"msg": "Błędny login lub hasło"}), 401
 
     ret = {
