@@ -102,9 +102,9 @@ def creditCardsOfAccount(idAccount):
 
 
 # zmiana limitu kart
-@credit_cardsblueprint.route('/credit_cards/balance', methods=['POST'])
+@credit_cardsblueprint.route('/credit_cards/limit', methods=['POST'])
 @jwt_required
-def balance():
+def limit():
     if not is_input_json(request, ['idCard', 'balance']):
         return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
@@ -118,7 +118,7 @@ def balance():
         return jsonify({'msg': 'Zły typ '}), 401
 
     if balance <= 0:
-        return jsonify({'msg': 'Limit musu być dodatni'}), 401
+        return jsonify({'msg': 'Limit musi być dodatni'}), 401
 
     idAcc = get_account_of_idCreditCards(idCard)
 

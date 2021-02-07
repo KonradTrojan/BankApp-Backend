@@ -73,10 +73,9 @@ def accountsOfCustomer():
 
         try:
 
-            # Dodawanie karty do bd
+            # Dodawanie konta do bd
             sql = """INSERT INTO owners (idCustomers) VALUES (%s)"""
             cursor.execute(sql, [get_jwt_identity()])
-            # commit zmian
             conn.commit()
 
             cursor = conn.cursor()
