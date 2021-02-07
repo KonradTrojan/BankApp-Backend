@@ -9,26 +9,29 @@ transferBlueprint = Blueprint("transferBlueprint", __name__)
 def transfer():
 
     if not is_input_json(request, ['title', 'accountNumber', 'fromAccount', 'amount']):
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
     # Rzutowanie numerów kont na int i tytułu na str
     try:
+        if isinstance(request.json['title'], int) or isinstance(request.json['title'], float):
+            return jsonify({'msg': 'Tytuł nie może być liczbą.'}), 401
+
         title = str(request.json['title'])
         toAccountNum = int(request.json['accountNumber'])
         fromAccountNum = int((request.json['fromAccount']))
     except ValueError:
-        return jsonify({'msg': 'Zły tytuł lub numery kont '}), 401
+        return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
 
     if toAccountNum == fromAccountNum:
-        return jsonify({'msg': 'Nie można dokonać transakcji między tym samym kontem '}), 401
+        return jsonify({'msg': 'Nie można dokonać przelewu między tym samym kontem.'}), 401
 
     amount = request.json['amount']
     # sprawdzanie czy kwota ma odpowiedni typ i jest dodatnia
     if not (isinstance(amount, int) or isinstance(amount, float)):
-        return jsonify({'msg': 'Zły typ kwoty przelewu'}), 401
+        return jsonify({'msg': 'Zły typ kwoty przelewu.'}), 401
     else:
         if amount <= 0:
-            return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0'}), 401
+            return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0.'}), 401
 
     # przypisanie idAccount na podstawie numeru konta
     senderId = account_number_to_idAccounts(fromAccountNum)
@@ -36,11 +39,11 @@ def transfer():
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
     if recipientId is None or senderId is None:
-        return jsonify({'msg': 'Nie istnieje taki numer konta'}), 401
+        return jsonify({'msg': 'Nie istnieje taki numer konta.'}), 401
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
     if not isOwner(get_jwt_identity(), senderId):
-        return jsonify({'msg': 'Brak dostępu do tego konta'}), 401
+        return jsonify({'msg': 'Brak dostępu do tego konta.'}), 401
 
     # rozpoczęcie transakcji
     try:
@@ -49,7 +52,7 @@ def transfer():
 
         # sprawdzenie czy na kocie jest wystarczająco pięniędzy
         if not hasMoney(senderId, amount):
-            return jsonify({'msg': "Nie wystarczające środki na koncie"}), 401
+            return jsonify({'msg': "Nie wystarczające środki na koncie."}), 401
         balance = hasMoney(senderId, amount)
 
         # aktualizacja stanu konta u wysyłającego
@@ -79,7 +82,7 @@ def transfer():
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
     cursor = conn.cursor()
-    sql = """select balance from accounts where idAccounts = %s """
+    sql = """SELECT balance FROM accounts WHERE idAccounts = %s """
     cursor.execute(sql, [accountsId])
     data = cursor.fetchone()
 

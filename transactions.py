@@ -37,10 +37,10 @@ def transactionsOfAccount(idAccount):
 def generatePDF():
     if request.method == 'POST':
         if not is_input_json(request, ['idTransactions']):
-            return jsonify({"msg": "Missing JSON in request"}), 400
+            return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
         if not isinstance(request.json['idTransactions'], int):
-            return jsonify({"msg": "IdTransactions musi być typu int"}), 400
+            return jsonify({"msg": "Identyfikator transakcji musi być typu int"}), 400
 
         idTrans = request.json['idTransactions']
 
@@ -82,8 +82,8 @@ def get_info_about_transcation(idTransactions, type):
     myJson = []
     simpleData = []
     for id in idTransactions:
-        sql = """select idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
-        message from transactions where idTransactions = %s """
+        sql = """SELECT idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
+        message FROM transactions WHERE idTransactions = %s """
         cursor.execute(sql, [id])
         data = cursor.fetchone()
 

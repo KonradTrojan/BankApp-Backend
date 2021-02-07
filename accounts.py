@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session, json
+from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, isOwner, is_input_json
 from datetime import datetime
 from flask_jwt_extended import jwt_required,get_jwt_identity
@@ -39,7 +39,7 @@ def accountsOfCustomer():
     elif request.method == 'DELETE':
 
         if not is_input_json(request, ['idAccounts']):
-            return jsonify({"msg": "Missing JSON in request"}), 400
+            return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
         idAccounts = request.json['idAccounts']
 
@@ -53,7 +53,7 @@ def accountsOfCustomer():
         try:
 
             # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
-            sql = """DELETE FROM accounts where idAccounts = %s"""
+            sql = """DELETE FROM accounts WHERE idAccounts = %s"""
             cursor.execute(sql, [idAccounts])
 
             # commit zmian
@@ -62,16 +62,15 @@ def accountsOfCustomer():
         except mysql.connect.Error as error:
             # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+            return jsonify({'msg': "Usunięcie zakończone pomyślnie"}), 200
 
     # Dodawanie kont
     elif request.method == 'POST':
 
-        # rozpoczęcie transakcji
         try:
 
             # Dodawanie karty do bd
@@ -81,16 +80,13 @@ def accountsOfCustomer():
             conn.commit()
 
             cursor = conn.cursor()
-            # Dodawanie karty do bd
-            sql = """UPDATE accounts SET dataOpened = %s WHERE dataOpened is NULL"""
+            sql = """UPDATE accounts SET dataOpened = %s WHERE dataOpened IS NULL"""
             cursor.execute(sql, [datetime.now()])
-            # commit zmian
             conn.commit()
 
         except mysql.connect.Error as error:
-            # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()

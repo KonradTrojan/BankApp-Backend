@@ -14,7 +14,7 @@ def customer():
         # połączenie z BD
         conn = mysql.connect()
         cursor = conn.cursor()
-        sql = """select login, firstName, lastName, email, phone, dateBecomeCustomer from customers where idCustomers= %s """
+        sql = """SELECT login, firstName, lastName, email, phone, dateBecomeCustomer FROM customers WHERE idCustomers = %s """
         cursor.execute(sql, [get_jwt_identity()])
         data = cursor.fetchone()
 

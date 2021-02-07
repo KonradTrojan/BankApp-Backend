@@ -26,7 +26,7 @@ def credit_cards():
     elif request.method == 'DELETE':
 
         if not is_input_json(request, ['idCard']):
-            return jsonify({"msg": "Missing JSON in request"}), 400
+            return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
         idCard = request.json['idCard']
 
@@ -54,21 +54,21 @@ def credit_cards():
         except mysql.connect.Error as error:
             # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Karta usunięta pomyślnie"}), 200
+            return jsonify({'msg': "Karta usunięta pomyślnie."}), 200
 
     elif request.method == 'POST':
 
         if not is_input_json(request, ['idAccount']):
-            return jsonify({"msg": "Missing JSON in request"}), 400
+            return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
         idAcc = request.json['idAccount']
 
         if not isOwner(get_jwt_identity(), idAcc):
-            return jsonify({"msg": "Brak dostępu"}), 401
+            return jsonify({"msg": "Brak dostępu."}), 401
 
         # rozpoczęcie transakcji
         try:
@@ -83,11 +83,11 @@ def credit_cards():
         except mysql.connect.Error as error:
             # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Karta dodane pomyślnie"}), 200
+            return jsonify({'msg': "Karta dodana pomyślnie"}), 200
 
 
 # wszystkie karty przypisane do danego konta
@@ -106,7 +106,7 @@ def creditCardsOfAccount(idAccount):
 @jwt_required
 def balance():
     if not is_input_json(request, ['idCard', 'balance']):
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
     idCard = request.json['idCard']
     balance = request.json['balance']
@@ -142,11 +142,11 @@ def balance():
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
         cursor.rollback()
-        return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+        return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
     finally:
         cursor.close()
         conn.close()
-        return jsonify({'msg': "Karta dodane pomyślnie"}), 200
+        return jsonify({'msg': "Limit zmieniony pomyślnie"}), 200
 
 
 def get_account_of_idCreditCards(idCreditCard):

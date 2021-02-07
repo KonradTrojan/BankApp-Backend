@@ -13,14 +13,14 @@ loginblueprint = Blueprint('loginblueprint', __name__)
 def loginJWT():
     # sprawdzanie danych wejściowych
     if not is_input_json(request, ['username', 'password']):
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
     username = request.json.get('username', None)
     password = request.json.get('password', None)
 
     # pobranie danych z bazy danych
     cursor = mysql.get_db().cursor()
-    sql = """select password, idCustomers from customers where login like %s"""
+    sql = """SELECT password, idCustomers FROM customers WHERE login LIKE %s"""
     cursor.execute(sql, [username])
 
     data = cursor.fetchone()
@@ -28,12 +28,12 @@ def loginJWT():
         password_ = data[0]
         idCustomers = data[1]
     except TypeError:
-        return jsonify({"msg": "Bad username or password"}), 401
+        return jsonify({"msg": "Błędny login lub hasło"}), 401
 
     # hashowanie i porównanie haseł
     # TODO dodać hashowanie
     if password != password_:
-        return jsonify({"msg": "Bad username or password"}), 401
+        return jsonify({"msg": "Błędny login lub hasło"}), 401
 
     ret = {
         'access_token': create_access_token(identity=idCustomers),
@@ -41,13 +41,14 @@ def loginJWT():
     }
     return jsonify(ret), 200
 
+
 # wylogowywanie - należy unieważnic access_token pod /logoutjwt i fresh_token pod /logoutjwtrefresh
 @loginblueprint.route('/logoutjwt', methods=['DELETE'])
 @jwt_required
 def logout():
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
-    return jsonify({"msg": "Successfully logged out"}), 200
+    return jsonify({"msg": "Wylogowywanie pomyślne."}), 200
 
 
 @loginblueprint.route('/logoutjwtrefresh', methods=['DELETE'])
@@ -55,7 +56,7 @@ def logout():
 def logout2():
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
-    return jsonify({"msg": "Successfully logged out"}), 200
+    return jsonify({"msg": "Wylogowywanie pomyślne."}), 200
 
 
 # dodawanie wygasłych tokenów do blacklisty
