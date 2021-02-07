@@ -25,13 +25,14 @@ def transfer():
     if toAccountNum == fromAccountNum:
         return jsonify({'msg': 'Nie można dokonać przelewu między tym samym kontem.'}), 401
 
-    amount = request.json['amount']
+
     # sprawdzanie czy kwota ma odpowiedni typ i jest dodatnia
-    if not (isinstance(amount, int) or isinstance(amount, float)):
-        return jsonify({'msg': 'Zły typ kwoty przelewu.'}), 401
-    else:
+    try:
+        amount = float(request.json['amount'])
         if amount <= 0:
             return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0.'}), 401
+    except ValueError:
+        return jsonify({'msg': 'Kwota przelewu musi być liczbą.'}), 401
 
     # przypisanie idAccount na podstawie numeru konta
     senderId = account_number_to_idAccounts(fromAccountNum)
