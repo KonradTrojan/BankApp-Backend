@@ -1,10 +1,141 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json
+from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json, account_number_to_idAccounts
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import Flask, render_template, make_response
 import pdfkit
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
+
+# wyświetla wszystkie transakcje danego użytkownika
+@transactionsblueprint.route('/transactions')
+@jwt_required
+def transactionsFilter():
+
+    if is_input_json(request, ['limit', 'offset']):
+        limit = request.json['limit']
+        offset = request.json['offset']
+
+    FROM_DATE_FILTER = False
+    if is_input_json(request, ['fromDate']):
+        fromDate = request.json['fromDate']
+        FROM_DATE_FILTER = True
+
+    TO_DATE_FILTER = False
+    if is_input_json(request, ['toDate']):
+        toDate = request.json['tpDate']
+        TO_DATE_FILTER = True
+
+    CLIENT_NUMBER_FILTER = False
+    if is_input_json(request, ['clienNumber']):
+        clientNumber = request.json['clienNumber']
+        CLIENT_NUMBER_FILTER = True
+
+    FOREIGN_NUMBER_FILTER = False
+    if is_input_json(request, ['foreignNumber']):
+        foreignNumber = request.json['foreignNumber']
+        FOREIGN_NUMBER_FILTER = True
+
+    CREDIT_CARD_FILTER = False
+    if is_input_json(request, ['creditCard']):
+        creditCard = request.json['creditCard']
+        CREDIT_CARD_FILTER = True
+
+    FROM_AMOUNT_FILTER = False
+    if is_input_json(request, ['fromAmount']):
+        fromAmount = request.json['fromAmount']
+        FROM_AMOUNT_FILTER = True
+
+    TO_AMOUNT_FILTER = False
+    if is_input_json(request, ['toAmount']):
+        toAmount = request.json['toAmount']
+        TO_AMOUNT_FILTER = True
+
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        bindingTable = []
+
+        sql = """SELECT idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
+        message, idTransactions, idCreditCards  FROM transactions where """
+
+        if FROM_DATE_FILTER and TO_DATE_FILTER:
+            sql += """ (date BEETWEN %s AND %s) AND """
+            bindingTable.append(fromDate)
+            bindingTable.append(toDate)
+        else:
+            if FROM_DATE_FILTER:
+                sql += " (date >= %s) AND "
+                bindingTable.append(fromDate)
+            elif TO_DATE_FILTER:
+                sql += " (date <= %s) AND "
+                bindingTable.append(toDate)
+
+        # TODO
+        if CLIENT_NUMBER_FILTER:
+            idAcc = account_number_to_idAccounts(clientNumber)
+            sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
+            bindingTable.append(idAcc)
+            bindingTable.append(idAcc)
+
+        if FOREIGN_NUMBER_FILTER:
+            idAcc = account_number_to_idAccounts(foreignNumber)
+            sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
+            bindingTable.append(idAcc)
+            bindingTable.append(idAcc)
+
+        if CREDIT_CARD_FILTER:
+            sql += """ (idCreditCards = %s) AND """
+            bindingTable.append(creditCard)
+
+        if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
+            sql += """ (amountOfTransaction BEETWEN %s AND %s) """
+            bindingTable.append(fromAmount)
+            bindingTable.append(toAmount)
+        else:
+            if FROM_AMOUNT_FILTER:
+                sql += """ (amountOfTransaction > %s) """
+                bindingTable.append(fromAmount)
+            elif TO_AMOUNT_FILTER:
+                sql += """ (amountOfTransaction < %s) """
+                bindingTable.append(toAmount)
+            else:
+                sql += """ (amountOfTransaction > %s) """
+                bindingTable.append(0)
+
+
+        sql += """ ORDER BY date LIMIT %s OFFSET %s"""
+        bindingTable.append(limit)
+        bindingTable.append(offset)
+
+        cursor.execute(sql, bindingTable)
+        records = cursor.fetchall()
+
+        myJson = []
+        for row in records:
+            myJson.append({
+                'idAccounts': row[0],
+                'idAccountsOfRecipient': row[1],
+                'amountOfTransaction': row[2],
+                'date': row[3],
+                'old_balance': row[4],
+                'new_balance': row[5],
+                'message': row[6],
+                'idTransactions': row[7],
+                'idCreditCards': row[8]
+            })
+
+        return myJson
+
+    except mysql.connect.Error as error:
+        # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
+        cursor.rollback()
+        return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+    finally:
+        cursor.close()
+        conn.close()
+        return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+
 
 
 # wyświetla wszystkie transakcje danego użytkownika
