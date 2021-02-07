@@ -139,7 +139,7 @@ def transactionsFilter():
 
 
 # wyświetla wszystkie transakcje danego użytkownika
-@transactionsblueprint.route('/transactions')
+@transactionsblueprint.route('/transactionsAll')
 @jwt_required
 def transactions():
 
