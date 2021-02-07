@@ -105,19 +105,19 @@ def creditCardsOfAccount(idAccount):
 @credit_cardsblueprint.route('/credit_cards/limit', methods=['POST'])
 @jwt_required
 def limit():
-    if not is_input_json(request, ['idCard', 'balance']):
+    if not is_input_json(request, ['idCard', 'limit']):
         return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
     idCard = request.json['idCard']
-    balance = request.json['balance']
+    limit = request.json['limit']
 
     if not isinstance(idCard, int):
         return jsonify({'msg': 'Zły typ'}), 401
 
-    if not (isinstance(balance, int) or isinstance(balance, float)):
+    if not (isinstance(limit, int) or isinstance(limit, float)):
         return jsonify({'msg': 'Zły typ '}), 401
 
-    if balance <= 0:
+    if limit <= 0:
         return jsonify({'msg': 'Limit musi być dodatni'}), 401
 
     idAcc = get_account_of_idCreditCards(idCard)
@@ -133,8 +133,8 @@ def limit():
         cursor = conn.cursor()
 
         # Dodawanie karty do bd
-        sql = """UPDATE credit_cards SET balance = %s WHERE idCreditCards = %s"""
-        cursor.execute(sql, [balance, idCard])
+        sql = """UPDATE credit_cards SET maximumLimit = %s WHERE idCreditCards = %s"""
+        cursor.execute(sql, [limit, idCard])
 
         # commit zmian
         conn.commit()

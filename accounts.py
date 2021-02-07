@@ -46,7 +46,7 @@ def accountsOfCustomer():
         if not isinstance(idAccounts, int):
             return jsonify({'msg': 'Zły typ'}), 401
 
-        if not isOwner(get_jwt_identity(),idAccounts):
+        if not isOwner(get_jwt_identity(), idAccounts):
             return jsonify({'msg': 'Brak dostępu'}), 401
 
         # rozpoczęcie transakcji
