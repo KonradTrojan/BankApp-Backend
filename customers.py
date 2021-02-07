@@ -24,7 +24,7 @@ def customer():
             userData.append(row)
 
         return jsonify({
-            'idCustomer': identity,
+            'idCustomer': get_jwt_identity(),
             'login': userData[0],
             'firstName': userData[1],
             'lastName': userData[2],

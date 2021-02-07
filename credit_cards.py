@@ -1,12 +1,14 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, get_idCreditCards_of_Account, isOwner, is_input_json
+from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, get_idCreditCards_of_Account, isOwner, \
+    is_input_json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 
 credit_cardsblueprint = Blueprint('credit_cardsblueprint', __name__)
 
+
 # wszystkie karty przypisane do danego użytkownika
-@credit_cardsblueprint.route('/credit_cards', methods=['GET','DELETE','POST'])
+@credit_cardsblueprint.route('/credit_cards', methods=['GET', 'DELETE', 'POST'])
 @jwt_required
 def credit_cards():
     conn = mysql.connect()
@@ -73,7 +75,7 @@ def credit_cards():
 
             # Dodawanie karty do bd
             sql = """INSERT INTO credit_cards (maximumLimit, expiryDate, idAccounts ) VALUES (%s, %s, %s)"""
-            cursor.execute(sql, [5000, datetime.datetime.now() + datetime.timedelta(days=2*365), idAcc])
+            cursor.execute(sql, [5000, datetime.datetime.now() + datetime.timedelta(days=2 * 365), idAcc])
 
             # commit zmian
             conn.commit()
