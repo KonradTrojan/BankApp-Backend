@@ -125,7 +125,7 @@ def transactionsFilter():
             'idCreditCards': row[8]
         })
 
-    return myJson
+    return jsonify(myJson), 200
 
 
 
