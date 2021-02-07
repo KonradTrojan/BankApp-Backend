@@ -50,91 +50,84 @@ def transactionsFilter():
         toAmount = request.json['toAmount']
         TO_AMOUNT_FILTER = True
 
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor()
 
-        bindingTable = []
+    conn = mysql.connect()
+    cursor = conn.cursor()
 
-        sql = """SELECT idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
-        message, idTransactions, idCreditCards  FROM transactions where """
+    bindingTable = []
 
-        if FROM_DATE_FILTER and TO_DATE_FILTER:
-            sql += """ (date BEETWEN %s AND %s) AND """
+    sql = """SELECT idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
+    message, idTransactions, idCreditCards  FROM transactions where """
+
+    if FROM_DATE_FILTER and TO_DATE_FILTER:
+        sql += """ (date BEETWEN %s AND %s) AND """
+        bindingTable.append(fromDate)
+        bindingTable.append(toDate)
+    else:
+        if FROM_DATE_FILTER:
+            sql += " (date >= %s) AND "
             bindingTable.append(fromDate)
+        elif TO_DATE_FILTER:
+            sql += " (date <= %s) AND "
             bindingTable.append(toDate)
-        else:
-            if FROM_DATE_FILTER:
-                sql += " (date >= %s) AND "
-                bindingTable.append(fromDate)
-            elif TO_DATE_FILTER:
-                sql += " (date <= %s) AND "
-                bindingTable.append(toDate)
 
-        # TODO
-        if CLIENT_NUMBER_FILTER:
-            idAcc = account_number_to_idAccounts(clientNumber)
-            sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
-            bindingTable.append(idAcc)
-            bindingTable.append(idAcc)
+    # TODO
+    if CLIENT_NUMBER_FILTER:
+        idAcc = account_number_to_idAccounts(clientNumber)
+        sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
+        bindingTable.append(idAcc)
+        bindingTable.append(idAcc)
 
-        if FOREIGN_NUMBER_FILTER:
-            idAcc = account_number_to_idAccounts(foreignNumber)
-            sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
-            bindingTable.append(idAcc)
-            bindingTable.append(idAcc)
+    if FOREIGN_NUMBER_FILTER:
+        idAcc = account_number_to_idAccounts(foreignNumber)
+        sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
+        bindingTable.append(idAcc)
+        bindingTable.append(idAcc)
 
-        if CREDIT_CARD_FILTER:
-            sql += """ (idCreditCards = %s) AND """
-            bindingTable.append(creditCard)
+    if CREDIT_CARD_FILTER:
+        sql += """ (idCreditCards = %s) AND """
+        bindingTable.append(creditCard)
 
-        if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
-            sql += """ (amountOfTransaction BEETWEN %s AND %s) """
+    if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
+        sql += """ (amountOfTransaction BEETWEN %s AND %s) """
+        bindingTable.append(fromAmount)
+        bindingTable.append(toAmount)
+    else:
+        if FROM_AMOUNT_FILTER:
+            sql += """ (amountOfTransaction > %s) """
             bindingTable.append(fromAmount)
+        elif TO_AMOUNT_FILTER:
+            sql += """ (amountOfTransaction < %s) """
             bindingTable.append(toAmount)
         else:
-            if FROM_AMOUNT_FILTER:
-                sql += """ (amountOfTransaction > %s) """
-                bindingTable.append(fromAmount)
-            elif TO_AMOUNT_FILTER:
-                sql += """ (amountOfTransaction < %s) """
-                bindingTable.append(toAmount)
-            else:
-                sql += """ (amountOfTransaction > %s) """
-                bindingTable.append(0)
+            sql += """ (amountOfTransaction > %s) """
+            bindingTable.append(0)
 
 
-        sql += """ ORDER BY date LIMIT %s OFFSET %s"""
-        bindingTable.append(limit)
-        bindingTable.append(offset)
+    sql += """ ORDER BY date LIMIT %s OFFSET %s"""
+    bindingTable.append(limit)
+    bindingTable.append(offset)
 
-        cursor.execute(sql, bindingTable)
-        records = cursor.fetchall()
+    cursor.execute(sql, bindingTable)
+    records = cursor.fetchall()
 
-        myJson = []
-        for row in records:
-            myJson.append({
-                'idAccounts': row[0],
-                'idAccountsOfRecipient': row[1],
-                'amountOfTransaction': row[2],
-                'date': row[3],
-                'old_balance': row[4],
-                'new_balance': row[5],
-                'message': row[6],
-                'idTransactions': row[7],
-                'idCreditCards': row[8]
-            })
+    myJson = []
+    for row in records:
+        myJson.append({
+            'idAccounts': row[0],
+            'idAccountsOfRecipient': row[1],
+            'amountOfTransaction': row[2],
+            'date': row[3],
+            'old_balance': row[4],
+            'new_balance': row[5],
+            'message': row[6],
+            'idTransactions': row[7],
+            'idCreditCards': row[8]
+        })
 
-        return myJson
+    return myJson
 
-    except mysql.connect.Error as error:
-        # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
-        cursor.rollback()
-        return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
-    finally:
-        cursor.close()
-        conn.close()
-        return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+
 
 
 
