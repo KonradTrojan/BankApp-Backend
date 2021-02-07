@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Flask, render_template, make_response
+import pdfkit
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
@@ -54,7 +56,22 @@ def generatePDF():
         # TODO wszystko jest w infoTrans, w takiej kolejności jak dodawane są dane
         # TODO do JSONa z userData w linijce 95 tego programu
 
-        return ''
+        rendered = render_template('pdf_template.html', 
+            idTransactions  = idTrans, 
+            idAccounts = infoTrans[0],
+            idAccountsOfRecipient = infoTrans[1],
+            amountOfTransaction = infoTrans[2],
+            idCreditCards = infoTrans[3],
+            old_balance = infoTrans[4],
+            new_balance = infoTrans[5],
+            message = infoTrans[6])
+        pdf = pdfkit.from_string(rendered, False)
+
+        response = make_response(pdf)
+        response.headers['Content-Type']='application/pdf'
+        response.headers['Content-Disposition']='inline; filename=potwierdzenie-'+idTrans+'.pdf'
+
+        return response
 
 
 def is_account_of_transaction(idTransaction):
