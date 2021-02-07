@@ -33,7 +33,7 @@ def loginJWT():
 
     # hashowanie i porównanie haseł
     # TODO dodać hashowanie
-    if !sha256.verify(password, hash_):
+    if not sha256.verify(password, hash_):
         return jsonify({"msg": "Błędny login lub hasło"}), 401
 
     ret = {
