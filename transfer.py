@@ -47,45 +47,42 @@ def transfer():
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
     if not isOwner(get_jwt_identity(), senderId):
         return jsonify({'msg': 'Restricted access.'}), 401
-    flaga = 0
+
     # rozpoczęcie transakcji
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        flaga = 1
+
         # sprawdzenie czy na kocie jest wystarczająco pięniędzy
         if not has_money(senderId, amount):
-            flaga = 2
             return jsonify({'msg': "Not enough money on the account."}), 401
         else:
-            flaga = 3
             old_balance = get_balance(senderId)
-            flaga = 4
             new_balance = get_balance_after_transfer(senderId, amount)
-            flaga = 5
 
         # aktualizacja stanu konta u wysyłającego
-        flaga = 6
         sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
         cursor.execute(sql, [amount, senderId])
-        flaga = 7
 
         # aktualizacja stanu konta u odbiorcy
         sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
         cursor.execute(sql, [amount, recipientId])
-        flaga = 8
 
         # dodanie do wpisu o transakcji
         sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
         old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, old_balance, new_balance, title, None])
-        flaga = 9
+
         conn.commit()
-        flaga = 10
-        return jsonify({'msg': "Transfer approved", "er": flaga}), 200
+        cursor.close()
+        conn.close()
+
+        return jsonify({'msg': "Transfer approved"}), 200
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
         cursor.rollback()
+        cursor.close()
+        conn.close()
         return jsonify({'msg': "Transfer rejected", 'error': error}), 401
 
 
