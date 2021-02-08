@@ -15,8 +15,8 @@ def transfer():
         return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     title = str(request.json['title'])
-    if not re.match('^[\s.,?()a-zA-Z0-9]+$', title):
-        return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
+    #if not re.match('^[\s.,?()a-zA-Z0-9]+$', title):
+    #    return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
 
     # Rzutowanie numerów kont na int
     try:
@@ -57,27 +57,24 @@ def transfer():
     if not has_money(senderId, amount):
         return jsonify({'msg': "Not enough money on the account."}), 401
     else:
-
         old_balance = get_balance(senderId)
         new_balance = get_balance_after_transfer(senderId, amount)
-    try:
 
-        # aktualizacja stanu konta u wysyłającego
-        sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
-        cursor.execute(sql, [amount, senderId])
+    # aktualizacja stanu konta u wysyłającego
+    sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
+    cursor.execute(sql, [amount, senderId])
 
-        # aktualizacja stanu konta u odbiorcy
-        sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
-        cursor.execute(sql, [amount, recipientId])
+    # aktualizacja stanu konta u odbiorcy
+    sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
+    cursor.execute(sql, [amount, recipientId])
 
-        # dodanie do wpisu o transakcji
-        sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
-        old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, old_balance, new_balance, title, None])
+    # dodanie do wpisu o transakcji
+    sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
+    old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, old_balance, new_balance, title, None])
 
-        conn.commit()
-    except TypeError:
-        return jsonify({"msg": "error"})
+    conn.commit()
+
 '''
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
@@ -90,19 +87,29 @@ def transfer():
 '''
 
 def has_money(idAcc, amount):
-    if get_balance_after_transfer(idAcc, amount) >= 0:
-        return True
-    else:
-        return False
+    try:
+        if get_balance_after_transfer(idAcc, amount) >= 0:
+            return True
+        else:
+            return False
+    except TypeError:
+        return jsonify({'msg': "1"}), 401
+
 
 def get_balance_after_transfer(idAcc, amount):
-    return get_balance(idAcc) - amount
+    try:
+        return get_balance(idAcc) - amount
+    except TypeError:
+        return jsonify({'msg': "2"}), 401
 
 def get_balance(idAcc):
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    sql = """SELECT balance FROM accounts WHERE idAccounts = %s """
-    cursor.execute(sql, [idAcc])
-    data = cursor.fetchone()
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        sql = """SELECT balance FROM accounts WHERE idAccounts = %s """
+        cursor.execute(sql, [idAcc])
+        data = cursor.fetchone()
 
-    return float(data[0])
+        return float(data[0])
+    except TypeError:
+        return jsonify({'msg': "1"}), 401
