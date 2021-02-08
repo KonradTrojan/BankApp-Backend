@@ -67,9 +67,9 @@ def transactionsFilter():
             return jsonify({"msg": "Wymagana data"}), 400
 
     CREDIT_CARD_FILTER = False
-    if is_input_json(request, ['IdCreditCard']):
+    if is_input_json(request, ['idCreditCard']):
         try:
-            IdCreditCard = int(request.json['IdCreditCard'])
+            idCreditCard = int(request.json['idCreditCard'])
             CREDIT_CARD_FILTER = True
         except ValueError:
             return jsonify({'msg': 'Numer karty musi być liczbą.'}), 401
@@ -117,7 +117,7 @@ def transactionsFilter():
 
     if CREDIT_CARD_FILTER:
         sql += """ (idCreditCards = %s) AND """
-        bindingTable.append(IdCreditCard)
+        bindingTable.append(idCreditCard)
 
     if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
         sql += """ (amountOfTransaction BETWEEN %s AND %s) AND """
