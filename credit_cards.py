@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, get_active_idAccounts_Of_Customer, get_idCreditCards_of_Account, isOwner, \
-    is_input_json
+    is_input_json, account_number_to_idAccounts
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import datetime
 
@@ -62,10 +62,14 @@ def credit_cards():
 
     elif request.method == 'POST':
 
-        if not is_input_json(request, ['idAccount']):
+        if not is_input_json(request, ['accountNumber']):
             return jsonify({"msg": "Missing or bad JSON in request."}), 400
+        try:
+            accountNumber = int(request.json['accountNumber'])
+        except TypeError:
+            return jsonify({"msg": "Account id must be a integer"})
 
-        idAcc = request.json['idAccount']
+        idAcc = account_number_to_idAccounts(accountNumber)
 
         if not isOwner(get_jwt_identity(), idAcc):
             return jsonify({"msg": "Access restricted."}), 401
