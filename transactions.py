@@ -16,7 +16,7 @@ def transactionsFilter():
         try:
             limit = int(request.json['limit'])
             offset = int(request.json['offset'])
-            if limit <= 0 or offset <= 0:
+            if limit < 0 or offset < 0:
                 return jsonify({'msg': 'Limit i Offset muszą być dodatnie.'}), 401
         except ValueError:
             return jsonify({'msg': 'Limit i offset muszą być liczbami.'}), 401
@@ -33,7 +33,7 @@ def transactionsFilter():
         except ValueError:
             return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
     else:
-        return jsonify({"msg": "Błąd związany z JSONem."}), 400
+        return jsonify({"msg": "Błąd związany z JSONem. 1"}), 400
 
     FOREIGN_NUMBER_FILTER = False
     if is_input_json(request, ['foreignNumber']):
@@ -42,12 +42,12 @@ def transactionsFilter():
             idAccForeign = account_number_to_idAccounts(foreignNumber)
             FOREIGN_NUMBER_FILTER = True
         except ValueError:
-            return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
+            return jsonify({'msg': 'Numer konta musi być liczbą. '}), 401
 
     FROM_DATE_FILTER = False
     if is_input_json(request, ['fromDate']):
         try:
-            fromDate = request.json['fromDate']
+            fromDate = datetime.datetime.strptime(request.json['fromDate'], '%Y-%m-%d %H:%M:%S.%f')
             if isinstance(fromDate, datetime.date):
                 FROM_DATE_FILTER = True
             else:
@@ -58,7 +58,7 @@ def transactionsFilter():
     TO_DATE_FILTER = False
     if is_input_json(request, ['toDate']):
         try:
-            toDate = request.json['toDate']
+            toDate = datetime.datetime.strptime(request.json['toDate'], '%Y-%m-%d %H:%M:%S.%f')
             if isinstance(toDate, datetime.date):
                 TO_DATE_FILTER = True
             else:
