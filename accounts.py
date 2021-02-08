@@ -51,13 +51,19 @@ def accountsOfCustomer():
 
         # rozpoczęcie transakcji
         try:
-
-            # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
-            sql = """DELETE FROM accounts WHERE idAccounts = %s"""
+            sql = """SELECT balance FROM accounts WHERE idAccounts = %s"""
             cursor.execute(sql, [idAccounts])
+            data = cursor.fetchone()
 
-            # commit zmian
-            conn.commit()
+            if data[0] == 0:
+                # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
+                sql = """DELETE FROM accounts WHERE idAccounts = %s"""
+                cursor.execute(sql, [idAccounts])
+
+                # commit zmian
+                conn.commit()
+            else:
+                return jsonify({"msg": "The account cannot be deleted. Transfer the money first."})
 
         except mysql.connect.Error as error:
             cursor.rollback()
