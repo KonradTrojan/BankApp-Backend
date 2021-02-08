@@ -74,7 +74,7 @@ def accountsOfCustomer():
             if ACCOUNT_DELETED:
                 return jsonify({'msg': "The account has been deleted."}), 200
             else:
-                return jsonify({"msg": "The account cannot be deleted. Transfer the money first."}), 200
+                return jsonify({"msg": "The account cannot be deleted. Transfer the money first."}), 401
 
     # Dodawanie kont
     elif request.method == 'POST':
