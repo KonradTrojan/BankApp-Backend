@@ -94,7 +94,7 @@ def account_number_to_idAccounts(accountNum):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        sql = """select idAccounts from accounts where number= %s """
+        sql = """select idAccounts from accounts where number = %s """
         cursor.execute(sql, [accountNum])
         data = cursor.fetchone()
 
@@ -102,6 +102,17 @@ def account_number_to_idAccounts(accountNum):
     except TypeError:
         return None
 
+def idAccount_to_saccount_number(idAcc):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        sql = """select number from accounts where idAccounts = %s """
+        cursor.execute(sql, [idAcc])
+        data = cursor.fetchone()
+
+        return data[0]
+    except TypeError:
+        return None
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()

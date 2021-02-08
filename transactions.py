@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json, account_number_to_idAccounts
+from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json, account_number_to_idAccounts, idAccount_to_saccount_number
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import render_template, make_response
 import pdfkit
@@ -216,8 +216,8 @@ def generatePDF():
 
         rendered = render_template('pdf_template.html', 
             idTransactions  = idTrans, 
-            idAccounts = account_number_to_idAccounts(int(infoTrans[0])),
-            idAccountsOfRecipient = account_number_to_idAccounts(int(infoTrans[1])),
+            idAccounts = idAccount_to_saccount_number(infoTrans[0]),
+            idAccountsOfRecipient = idAccount_to_saccount_number(infoTrans[1]),
             amountOfTransaction = infoTrans[2],
             idCreditCards = infoTrans[3],
             old_balance = infoTrans[4],
