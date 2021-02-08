@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer, \
-    is_input_json
+    is_input_json, round_down
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 
@@ -15,8 +15,8 @@ def transfer():
         return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     title = str(request.json['title'])
-    #if not re.match('^[\s.,?()a-zA-Z0-9]+$', title):
-    #    return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
+    if not re.match('^[\s.,?()a-zA-Z0-9]+$', title):
+        return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
 
     # Rzutowanie numerów kont na int
     try:
@@ -31,6 +31,7 @@ def transfer():
     # sprawdzanie czy kwota ma odpowiedni typ i jest dodatnia
     try:
         amount = float(request.json['amount'])
+        amount = round_down(amount, 2)
         if amount <= 0:
             return jsonify({'msg': 'Amount of the transfer must be a positive number.'}), 401
     except ValueError:
@@ -86,15 +87,16 @@ def transfer():
         return jsonify({'msg': "Transfer rejected", 'error': error}), 401
 
 
-
 def has_money(idAcc, amount):
     if get_balance_after_transfer(idAcc, amount) >= 0:
         return True
     else:
         return False
 
+
 def get_balance_after_transfer(idAcc, amount):
     return get_balance(idAcc) - amount
+
 
 def get_balance(idAcc):
     conn = mysql.connect()
