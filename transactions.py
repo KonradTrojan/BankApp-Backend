@@ -20,6 +20,8 @@ def transactionsFilter():
                 return jsonify({'msg': 'Limit i Offset muszą być dodatnie.'}), 401
         except ValueError:
             return jsonify({'msg': 'Limit i offset muszą być liczbami.'}), 401
+    else:
+        return jsonify({"msg": "Błąd związany z JSONem. 1"}), 400
 
     CUSTOMER_NUMBER_FILTER = False
     if is_input_json(request, ['customerNumber']):
