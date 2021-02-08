@@ -1,5 +1,5 @@
 from flaskext.mysql import MySQL
-from flask import jsonify
+import math
 mysql = MySQL()
 
 #
@@ -126,3 +126,8 @@ def hasMoney(accountsId, amount):
         return True
     else:
         return False
+
+
+def round_down(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.floor(n * multiplier) / multiplier
