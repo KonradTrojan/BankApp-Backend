@@ -1,19 +1,21 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer,is_input_json
+from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer, \
+    is_input_json
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
+
 transferBlueprint = Blueprint("transferBlueprint", __name__)
 import re
 
-@transferBlueprint.route("/transfer",methods=['POST'])
+
+@transferBlueprint.route("/transfer", methods=['POST'])
 @jwt_required
 def transfer():
-
     if not is_input_json(request, ['title', 'accountNumber', 'fromAccount', 'amount']):
         return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     title = str(request.json['title'])
-    if not re.match('^[\s.,?()a-zA-Z0-9]+$'):
+    if not re.match('^[\s.,?()a-zA-Z0-9]+$', title):
         return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
 
     # Rzutowanie numerów kont na int
@@ -25,7 +27,6 @@ def transfer():
 
     if toAccountNum == fromAccountNum:
         return jsonify({'msg': 'Transfer between the same accounts is not allowed.'}), 401
-
 
     # sprawdzanie czy kwota ma odpowiedni typ i jest dodatnia
     try:
@@ -68,7 +69,7 @@ def transfer():
         # dodanie do wpisu o transakcji
         sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
         old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, balance, balance-amount, title, None])
+        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, balance, balance - amount, title, None])
 
         conn.commit()
 
@@ -80,6 +81,7 @@ def transfer():
         cursor.close()
         conn.close()
         return jsonify({'msg': "Transfer approved"}), 200
+
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
@@ -93,4 +95,3 @@ def hasMoney(accountsId, amount):
         return balance
     else:
         return False
-
