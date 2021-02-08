@@ -82,7 +82,7 @@ def transfer():
         flaga = 9
         conn.commit()
         flaga = 10
-
+        return jsonify({'msg': "Transfer approved", "er": flaga}), 200
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
         cursor.rollback()
