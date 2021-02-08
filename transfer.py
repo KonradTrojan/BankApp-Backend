@@ -87,10 +87,7 @@ def transfer():
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
         cursor.rollback()
         return jsonify({'msg': "Transfer rejected", 'error': error}), 401
-    finally:
-        cursor.close()
-        conn.close()
-        return jsonify({'msg': "Transfer approved", "er": flaga}), 200
+
 
 
 def has_money(idAcc, amount):
