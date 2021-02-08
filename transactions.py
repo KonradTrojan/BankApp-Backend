@@ -212,6 +212,8 @@ def generatePDF():
         # TODO wszystko jest w infoTrans, w takiej kolejności jak dodawane są dane
         # TODO do JSONa z userData w linijce 95 tego programu
 
+        config = pdfkit.configuration(wkhtmltopdf='/opt/wkhtmltopdf/bin/wkhtmltopdf')
+
         rendered = render_template('pdf_template.html', 
             idTransactions  = idTrans, 
             idAccounts = infoTrans[0],
@@ -221,7 +223,7 @@ def generatePDF():
             old_balance = infoTrans[4],
             new_balance = infoTrans[5],
             message = infoTrans[6])
-        pdf = pdfkit.from_string(rendered, False)
+        pdf = pdfkit.from_string(rendered, False, configuration=config)
 
         response = make_response(pdf)
         response.headers['Content-Type']='application/pdf'
