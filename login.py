@@ -1,12 +1,15 @@
-from flask import request,Blueprint,jsonify
+import datetime
+import re
+
+from flask import request, Blueprint, jsonify
 from flask_jwt_extended import (jwt_required, create_access_token, get_raw_jwt,
-     jwt_refresh_token_required, create_refresh_token, get_jwt_identity
-)
-from . import mysql
+                                jwt_refresh_token_required, create_refresh_token, get_jwt_identity
+                                )
+from passlib.hash import pbkdf2_sha256 as sha256
 from project.jwtHandler import jwt, blacklist
 from project.mysqlHandler import is_input_json
-from passlib.hash import pbkdf2_sha256 as sha256
-import datetime
+
+from . import mysql
 
 loginblueprint = Blueprint('loginblueprint', __name__)
 
@@ -19,6 +22,8 @@ def loginJWT():
 
     username = request.json.get('username', None)
     password = request.json.get('password', None)
+    if not re.match('^[a-zA-Z0-9]+$', username) or not re.match('^[a-zA-Z0-9]+$', password):
+        return jsonify({"msg": "Special characters are not allowed."}), 401
 
     # pobranie danych z bazy danych
     cursor = mysql.get_db().cursor()
