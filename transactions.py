@@ -8,7 +8,7 @@ import datetime
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
 # wyświetla wszystkie transakcje danego użytkownika
-@transactionsblueprint.route('/transactions', methods=['GET'])
+@transactionsblueprint.route('/transactions', methods=['POST'])
 @jwt_required
 def transactionsFilter():
 
