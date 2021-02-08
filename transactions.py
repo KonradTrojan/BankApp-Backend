@@ -99,7 +99,7 @@ def transactionsFilter():
     message, idTransactions, idCreditCards  FROM transactions where """
 
     if FROM_DATE_FILTER and TO_DATE_FILTER:
-        sql += """ (date BEETWEN %s AND %s) AND """
+        sql += """ (date BETWEEN %s AND %s) AND """
         bindingTable.append(fromDate)
         bindingTable.append(toDate)
     else:
@@ -120,7 +120,7 @@ def transactionsFilter():
         bindingTable.append(creditCard)
 
     if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
-        sql += """ (amountOfTransaction BEETWEN %s AND %s) AND """
+        sql += """ (amountOfTransaction BETWEEN %s AND %s) AND """
         bindingTable.append(fromAmount)
         bindingTable.append(toAmount)
     else:
