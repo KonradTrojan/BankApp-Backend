@@ -71,7 +71,9 @@ def check_if_token_in_blacklist(decrypted_token):
 @jwt_refresh_token_required
 def refresh():
     current_user = get_jwt_identity()
+    expires = datetime.timedelta(minutes=1)
     ret = {
-        'access_token': create_access_token(identity=current_user)
+        'access_token': create_access_token(identity=current_user, expires_delta=expires),
+        'refresh_token': create_refresh_token(identity=current_user, expires_delta=expires)
     }
     return jsonify(ret), 200
