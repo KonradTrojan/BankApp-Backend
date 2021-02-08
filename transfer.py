@@ -3,6 +3,7 @@ from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, g
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 transferBlueprint = Blueprint("transferBlueprint", __name__)
+import re
 
 @transferBlueprint.route("/transfer",methods=['POST'])
 @jwt_required
@@ -11,10 +12,12 @@ def transfer():
     if not is_input_json(request, ['title', 'accountNumber', 'fromAccount', 'amount']):
         return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
-    # Rzutowanie numerów kont na int i tytułu na str
+    title = str(request.json['title'])
+    if not re.match('^[\s.,?()a-zA-Z0-9]+$'):
+        return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
+
+    # Rzutowanie numerów kont na int
     try:
-        #TODO dodać sprawdzanie za pomocą wyrażeń regualrnych, czy tytuł nie ma nieodpwoednich znaków
-        title = str(request.json['title'])
         toAccountNum = int(request.json['accountNumber'])
         fromAccountNum = int((request.json['fromAccount']))
     except ValueError:
