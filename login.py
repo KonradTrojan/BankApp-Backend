@@ -6,6 +6,7 @@ from . import mysql
 from project.jwtHandler import jwt, blacklist
 from project.mysqlHandler import is_input_json
 from passlib.hash import pbkdf2_sha256 as sha256
+import datetime
 
 loginblueprint = Blueprint('loginblueprint', __name__)
 
@@ -34,10 +35,10 @@ def loginJWT():
     # hashowanie i porównanie haseł
     if not sha256.verify(password, hash_):
         return jsonify({"msg": "Błędny login lub hasło"}), 401
-
+    expires = datetime.timedelta(minutes=1)
     ret = {
-        'access_token': create_access_token(identity=idCustomers),
-        'refresh_token': create_refresh_token(identity=idCustomers)
+        'access_token': create_access_token(identity=idCustomers, expires_delta=expires),
+        'refresh_token': create_refresh_token(identity=idCustomers, expires_delta=expires)
     }
     return jsonify(ret), 200
 
