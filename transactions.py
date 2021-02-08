@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
-from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json, account_number_to_idAccounts, idAccount_to_saccount_number
+from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, \
+    get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json, \
+    account_number_to_idAccounts, idAccount_to_saccount_number
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import render_template, make_response
 import pdfkit
