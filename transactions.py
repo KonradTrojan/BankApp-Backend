@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, isOwner, get_active_idAccounts_Of_Customer, get_idTransfers_of_Account, get_all_idAccounts_of_Customer, is_input_json, account_number_to_idAccounts
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask import Flask, render_template, make_response
+from flask import render_template, make_response
 import pdfkit
+import datetime
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
@@ -12,44 +13,82 @@ transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 def transactionsFilter():
 
     if is_input_json(request, ['limit', 'offset']):
-        limit = request.json['limit']
-        offset = request.json['offset']
+        try:
+            limit = int(request.json['limit'])
+            offset = int(request.json['offset'])
+            if limit <= 0 or offset <= 0:
+                return jsonify({'msg': 'Limit i Offset muszą być dodatnie.'}), 401
+        except ValueError:
+            return jsonify({'msg': 'Limit i offset muszą być liczbami.'}), 401
 
-    FROM_DATE_FILTER = False
-    if is_input_json(request, ['fromDate']):
-        fromDate = request.json['fromDate']
-        FROM_DATE_FILTER = True
-
-    TO_DATE_FILTER = False
-    if is_input_json(request, ['toDate']):
-        toDate = request.json['tpDate']
-        TO_DATE_FILTER = True
-
-    CLIENT_NUMBER_FILTER = False
-    if is_input_json(request, ['clienNumber']):
-        clientNumber = request.json['clienNumber']
-        CLIENT_NUMBER_FILTER = True
+    CUSTOMER_NUMBER_FILTER = False
+    if is_input_json(request, ['customerNumber']):
+        try:
+            customerNumber = int(request.json['customerNumber'])
+            idAccCustomer = account_number_to_idAccounts(customerNumber)
+            if isOwner(get_jwt_identity(), idAccCustomer):
+                CUSTOMER_NUMBER_FILTER = True
+            else:
+                return jsonify({'msg': 'Brak dostępu.'}), 401
+        except ValueError:
+            return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
+    else:
+        return jsonify({"msg": "Błąd związany z JSONem."}), 400
 
     FOREIGN_NUMBER_FILTER = False
     if is_input_json(request, ['foreignNumber']):
-        foreignNumber = request.json['foreignNumber']
-        FOREIGN_NUMBER_FILTER = True
+        try:
+            foreignNumber = int(request.json['foreignNumber'])
+            idAccForeign = account_number_to_idAccounts(foreignNumber)
+            FOREIGN_NUMBER_FILTER = True
+        except ValueError:
+            return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
+
+    FROM_DATE_FILTER = False
+    if is_input_json(request, ['fromDate']):
+        try:
+            fromDate = request.json['fromDate']
+            if isinstance(fromDate, datetime.date):
+                FROM_DATE_FILTER = True
+            else:
+                return jsonify({"msg": "Zły typ daty"}), 400
+        except ValueError:
+            return jsonify({"msg": "Wymagana data"}), 400
+
+    TO_DATE_FILTER = False
+    if is_input_json(request, ['toDate']):
+        try:
+            toDate = request.json['toDate']
+            if isinstance(toDate, datetime.date):
+                TO_DATE_FILTER = True
+            else:
+                return jsonify({"msg": "Zły typ daty"}), 400
+        except ValueError:
+            return jsonify({"msg": "Wymagana data"}), 400
 
     CREDIT_CARD_FILTER = False
     if is_input_json(request, ['creditCard']):
-        creditCard = request.json['creditCard']
-        CREDIT_CARD_FILTER = True
+        try:
+            creditCard = int(request.json['creditCard'])
+            CREDIT_CARD_FILTER = True
+        except ValueError:
+            return jsonify({'msg': 'Numer karty musi być liczbą.'}), 401
 
     FROM_AMOUNT_FILTER = False
     if is_input_json(request, ['fromAmount']):
-        fromAmount = request.json['fromAmount']
-        FROM_AMOUNT_FILTER = True
+        try:
+            fromAmount = float(request.json['fromAmount'])
+            FROM_AMOUNT_FILTER = True
+        except ValueError:
+            return jsonify({'msg': 'Kwota przelewu musi być liczbą.'}), 401
 
     TO_AMOUNT_FILTER = False
     if is_input_json(request, ['toAmount']):
-        toAmount = request.json['toAmount']
-        TO_AMOUNT_FILTER = True
-
+        try:
+            toAmount = float(request.json['toAmount'])
+            TO_AMOUNT_FILTER = True
+        except ValueError:
+            return jsonify({'msg': 'Kwota przelewu musi być liczbą.'}), 401
 
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -71,38 +110,32 @@ def transactionsFilter():
             sql += " (date <= %s) AND "
             bindingTable.append(toDate)
 
-    # TODO
-    if CLIENT_NUMBER_FILTER:
-        idAcc = account_number_to_idAccounts(clientNumber)
-        sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
-        bindingTable.append(idAcc)
-        bindingTable.append(idAcc)
-
     if FOREIGN_NUMBER_FILTER:
-        idAcc = account_number_to_idAccounts(foreignNumber)
         sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) AND """
-        bindingTable.append(idAcc)
-        bindingTable.append(idAcc)
+        bindingTable.append(idAccForeign)
+        bindingTable.append(idAccForeign)
 
     if CREDIT_CARD_FILTER:
         sql += """ (idCreditCards = %s) AND """
         bindingTable.append(creditCard)
 
     if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
-        sql += """ (amountOfTransaction BEETWEN %s AND %s) """
+        sql += """ (amountOfTransaction BEETWEN %s AND %s) AND """
         bindingTable.append(fromAmount)
         bindingTable.append(toAmount)
     else:
         if FROM_AMOUNT_FILTER:
-            sql += """ (amountOfTransaction > %s) """
+            sql += """ (amountOfTransaction > %s) AND """
             bindingTable.append(fromAmount)
         elif TO_AMOUNT_FILTER:
-            sql += """ (amountOfTransaction < %s) """
+            sql += """ (amountOfTransaction < %s) AND """
             bindingTable.append(toAmount)
-        else:
-            sql += """ (amountOfTransaction > %s) """
-            bindingTable.append(0)
 
+    if CUSTOMER_NUMBER_FILTER:
+        idAccCustomer = account_number_to_idAccounts(customerNumber)
+        sql += """ (idAccounts = %s OR idAccountsOfRecipient = %s) """
+        bindingTable.append(idAccCustomer)
+        bindingTable.append(idAccCustomer)
 
     sql += """ ORDER BY date LIMIT %s OFFSET %s"""
     bindingTable.append(limit)
@@ -126,9 +159,6 @@ def transactionsFilter():
         })
 
     return jsonify(myJson), 200
-
-
-
 
 
 # wyświetla wszystkie transakcje danego użytkownika
