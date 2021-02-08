@@ -107,9 +107,12 @@ def transactionsFilter():
     message, idTransactions, idCreditCards  FROM transactions where """
 
     if FROM_DATE_FILTER and TO_DATE_FILTER:
-        sql += """ (date BETWEEN %s AND %s) AND """
-        bindingTable.append(fromDate)
-        bindingTable.append(toDate)
+        if fromDate < toDate:
+            sql += """ (date BETWEEN %s AND %s) AND """
+            bindingTable.append(fromDate)
+            bindingTable.append(toDate)
+        else:
+            return jsonify({"msg": "ToDate must be a later date."}), 401
     else:
         if FROM_DATE_FILTER:
             sql += " (date >= %s) AND "
@@ -128,9 +131,13 @@ def transactionsFilter():
         bindingTable.append(idCreditCard)
 
     if FROM_AMOUNT_FILTER and TO_AMOUNT_FILTER:
-        sql += """ (amountOfTransaction BETWEEN %s AND %s) AND """
-        bindingTable.append(fromAmount)
-        bindingTable.append(toAmount)
+        if fromAmount < toAmount:
+            sql += """ (amountOfTransaction BETWEEN %s AND %s) AND """
+            bindingTable.append(fromAmount)
+            bindingTable.append(toAmount)
+        else:
+            return jsonify({"msg": "ToAmount must be a bigger number."}), 401
+
     else:
         if FROM_AMOUNT_FILTER:
             sql += """ (amountOfTransaction > %s) AND """
