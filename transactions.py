@@ -221,10 +221,7 @@ def generatePDF():
 
         infoTrans = get_info_about_transcation(idTrans, '')
 
-        # TODO dodać samo generowanie pdfa, najlepiej używając pakietu z flaska
-        # TODO wszystko jest w infoTrans, w takiej kolejności jak dodawane są dane
-        # TODO do JSONa z userData w linijce 95 tego programu
-
+        # generowanie PDF
         config = pdfkit.configuration(wkhtmltopdf='/opt/wkhtmltopdf/bin/wkhtmltopdf')
 
         rendered = render_template('pdf_template.html', 
