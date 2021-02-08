@@ -47,7 +47,7 @@ def transactionsFilter():
     FROM_DATE_FILTER = False
     if is_input_json(request, ['fromDate']):
         try:
-            fromDate = datetime.datetime.strptime(request.json['fromDate'], '%Y-%m-%d %H:%M:%S.%f')
+            fromDate = datetime.datetime.strptime(request.json['fromDate'], '%Y-%m-%d %H:%M:%S')
             if isinstance(fromDate, datetime.date):
                 FROM_DATE_FILTER = True
             else:
@@ -58,7 +58,7 @@ def transactionsFilter():
     TO_DATE_FILTER = False
     if is_input_json(request, ['toDate']):
         try:
-            toDate = datetime.datetime.strptime(request.json['toDate'], '%Y-%m-%d %H:%M:%S.%f')
+            toDate = datetime.datetime.strptime(request.json['toDate'], '%Y-%m-%d %H:%M:%S')
             if isinstance(toDate, datetime.date):
                 TO_DATE_FILTER = True
             else:
