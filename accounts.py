@@ -50,6 +50,7 @@ def accountsOfCustomer():
             return jsonify({'msg': 'Restricted access'}), 401
 
         # rozpoczęcie transakcji
+        ACCOUNT_DELETED = False
         try:
             sql = """SELECT balance FROM accounts WHERE idAccounts = %s"""
             cursor.execute(sql, [idAccounts])
@@ -62,8 +63,7 @@ def accountsOfCustomer():
 
                 # commit zmian
                 conn.commit()
-            else:
-                return jsonify({"msg": "The account cannot be deleted. Transfer the money first."})
+                ACCOUNT_DELETED = True
 
         except mysql.connect.Error as error:
             cursor.rollback()
@@ -71,7 +71,10 @@ def accountsOfCustomer():
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "The account has been deleted."}), 200
+            if ACCOUNT_DELETED:
+                return jsonify({'msg': "The account has been deleted."}), 200
+            else:
+                return jsonify({"msg": "The account cannot be deleted. Transfer the money first."}), 200
 
     # Dodawanie kont
     elif request.method == 'POST':
