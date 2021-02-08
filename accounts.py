@@ -78,9 +78,7 @@ def accountsOfCustomer():
 
     # Dodawanie kont
     elif request.method == 'POST':
-
         try:
-
             # Dodawanie konta do bd
             sql = """INSERT INTO owners (idCustomers) VALUES (%s)"""
             cursor.execute(sql, [get_jwt_identity()])
