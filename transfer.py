@@ -57,7 +57,6 @@ def transfer():
     if not has_money(senderId, amount):
         return jsonify({'msg': "Not enough money on the account."}), 401
     else:
-        return jsonify({'msg': "enough money on the account."}), 401
         old_balance = get_balance(senderId)
         new_balance = get_balance_after_transfer(senderId, amount)
 
