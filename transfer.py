@@ -54,35 +54,30 @@ def transfer():
     cursor = conn.cursor()
 
     # sprawdzenie czy na kocie jest wystarczająco pięniędzy
-    try:
-        if not has_money(senderId, amount):
-            return jsonify({'msg': "Not enough money on the account."}), 401
-    except TypeError:
-        return jsonify({'msg': "przy has money."}), 401
+    if not has_money(senderId, amount):
+        return jsonify({'msg': "Not enough money on the account."}), 401
     else:
-        try:
-            old_balance = get_balance(senderId)
-        except TypeError:
-            return jsonify({'msg': "przy old balance."}), 401
-        try:
-            new_balance = get_balance_after_transfer(senderId, amount)
-        except TypeError:
-            return jsonify({'msg': "przy new balance."}), 401
 
-    # aktualizacja stanu konta u wysyłającego
-    sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
-    cursor.execute(sql, [amount, senderId])
+        old_balance = get_balance(senderId)
+        new_balance = get_balance_after_transfer(senderId, amount)
+    try:
 
-    # aktualizacja stanu konta u odbiorcy
-    sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
-    cursor.execute(sql, [amount, recipientId])
+        # aktualizacja stanu konta u wysyłającego
+        sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
+        cursor.execute(sql, [amount, senderId])
 
-    # dodanie do wpisu o transakcji
-    sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
-    old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-    cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, old_balance, new_balance, title, None])
+        # aktualizacja stanu konta u odbiorcy
+        sql = """UPDATE accounts SET balance=(balance+%s) where idAccounts = %s"""
+        cursor.execute(sql, [amount, recipientId])
 
-    conn.commit()
+        # dodanie do wpisu o transakcji
+        sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
+        old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, old_balance, new_balance, title, None])
+
+        conn.commit()
+    except TypeError:
+        return jsonify({"msg": "error"})
 '''
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
