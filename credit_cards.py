@@ -26,20 +26,20 @@ def credit_cards():
     elif request.method == 'DELETE':
 
         if not is_input_json(request, ['idCard']):
-            return jsonify({"msg": "Błąd związany z JSONem."}), 400
+            return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
         idCard = request.json['idCard']
 
         if not isinstance(idCard, int):
-            return jsonify({'msg': 'Zły typ'}), 401
+            return jsonify({'msg': 'Bad type'}), 401
 
         idAcc = get_account_of_idCreditCards(idCard)
 
         if not isinstance(idAcc, int):
-            return jsonify({"msg": "Nie ma takiej karty"}), 401
+            return jsonify({"msg": "This card does not exist."}), 401
 
         if not isOwner(get_jwt_identity(), idAcc):
-            return jsonify({"msg": "Brak dostępu"}), 401
+            return jsonify({"msg": "Access restricted"}), 401
 
         # rozpoczęcie transakcji
         try:
@@ -54,21 +54,21 @@ def credit_cards():
         except mysql.connect.Error as error:
             # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
+            return jsonify({'msg': "Connect with Data Base unsuccessfully.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Karta usunięta pomyślnie."}), 200
+            return jsonify({'msg': "The card has been deleted."}), 200
 
     elif request.method == 'POST':
 
         if not is_input_json(request, ['idAccount']):
-            return jsonify({"msg": "Błąd związany z JSONem."}), 400
+            return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
         idAcc = request.json['idAccount']
 
         if not isOwner(get_jwt_identity(), idAcc):
-            return jsonify({"msg": "Brak dostępu."}), 401
+            return jsonify({"msg": "Access restricted."}), 401
 
         # rozpoczęcie transakcji
         try:
@@ -83,11 +83,11 @@ def credit_cards():
         except mysql.connect.Error as error:
             # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
+            return jsonify({'msg': "Connect with Data Base unsuccessfully.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Karta dodana pomyślnie"}), 200
+            return jsonify({'msg': "The card has been added."}), 200
 
 
 # wszystkie karty przypisane do danego konta
@@ -98,7 +98,7 @@ def creditCardsOfAccount(idAccount):
         idCards = get_idCreditCards_of_Account(idAccount)
         return get_info_about_cards(idCards)
     else:
-        return jsonify({"msg": "Brak dostępu"}), 401
+        return jsonify({"msg": "Access restricted"}), 401
 
 
 # zmiana limitu kart
@@ -131,6 +131,8 @@ def limit():
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
+
+        sql = """SELECT limit """
 
         # Dodawanie karty do bd
         sql = """UPDATE credit_cards SET maximumLimit = %s WHERE idCreditCards = %s"""
