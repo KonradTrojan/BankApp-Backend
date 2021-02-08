@@ -106,27 +106,27 @@ def creditCardsOfAccount(idAccount):
 @jwt_required
 def limit():
     if not is_input_json(request, ['idCard', 'limit']):
-        return jsonify({"msg": "Błąd związany z JSONem."}), 400
+        return jsonify({"msg": "Missing or bad JSON in request."}), 400
     try:
         idCard = int(request.json['idCard'])
         limit = float(request.json['limit'])
     except ValueError:
-        return jsonify({"msg": "Zły typ"})
+        return jsonify({"msg": "Bad type"})
 
     if not isinstance(idCard, int):
-        return jsonify({'msg': 'Zły typ'}), 401
+        return jsonify({'msg': 'Bad type'}), 401
 
 
     if limit <= 0:
-        return jsonify({'msg': 'Limit musi być dodatni'}), 401
+        return jsonify({'msg': 'Limit must be a number.'}), 401
 
     idAcc = get_account_of_idCreditCards(idCard)
 
     if not isinstance(idAcc, int):
-        return jsonify({"msg": "Nie ma takiej karty"}), 401
+        return jsonify({"msg": "This card does not exist."}), 401
 
     if not isOwner(get_jwt_identity(), idAcc):
-        return jsonify({"msg": "Brak dostępu"}), 401
+        return jsonify({"msg": "Access restricted."}), 401
 
     try:
         conn = mysql.connect()
@@ -142,11 +142,11 @@ def limit():
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
         cursor.rollback()
-        return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
+        return jsonify({'msg': "Connect with Data Base unsuccessfully.", 'error': error}), 401
     finally:
         cursor.close()
         conn.close()
-        return jsonify({'msg': "Limit zmieniony pomyślnie"}), 200
+        return jsonify({'msg': "The limit has been changed."}), 200
 
 
 def get_account_of_idCreditCards(idCreditCard):

@@ -17,11 +17,11 @@ def transactionsFilter():
             limit = int(request.json['limit'])
             offset = int(request.json['offset'])
             if limit < 0 or offset < 0:
-                return jsonify({'msg': 'Limit i Offset muszą być dodatnie.'}), 401
+                return jsonify({'msg': 'Limit and offset must be positive numbers.'}), 401
         except ValueError:
-            return jsonify({'msg': 'Limit i offset muszą być liczbami.'}), 401
+            return jsonify({'msg': 'Limit and offset must be numbers..'}), 401
     else:
-        return jsonify({"msg": "Błąd związany z JSONem. 1"}), 400
+        return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     CUSTOMER_NUMBER_FILTER = False
     if is_input_json(request, ['customerNumber']):
@@ -31,11 +31,11 @@ def transactionsFilter():
             if isOwner(get_jwt_identity(), idAccCustomer):
                 CUSTOMER_NUMBER_FILTER = True
             else:
-                return jsonify({'msg': 'Brak dostępu.'}), 401
+                return jsonify({'msg': 'Access restricted.'}), 401
         except ValueError:
-            return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
+            return jsonify({'msg': 'The account number must be a number.'}), 401
     else:
-        return jsonify({"msg": "Błąd związany z JSONem. 1"}), 400
+        return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     FOREIGN_NUMBER_FILTER = False
     if is_input_json(request, ['foreignNumber']):
@@ -44,7 +44,7 @@ def transactionsFilter():
             idAccForeign = account_number_to_idAccounts(foreignNumber)
             FOREIGN_NUMBER_FILTER = True
         except ValueError:
-            return jsonify({'msg': 'Numer konta musi być liczbą. '}), 401
+            return jsonify({'msg': 'The account number must be a number.'}), 401
 
     FROM_DATE_FILTER = False
     if is_input_json(request, ['fromDate']):
@@ -53,9 +53,9 @@ def transactionsFilter():
             if isinstance(fromDate, datetime.date):
                 FROM_DATE_FILTER = True
             else:
-                return jsonify({"msg": "Zły typ daty"}), 400
+                return jsonify({"msg": "Bad type of date."}), 400
         except ValueError:
-            return jsonify({"msg": "Wymagana data"}), 400
+            return jsonify({"msg": "Date is required."}), 400
 
     TO_DATE_FILTER = False
     if is_input_json(request, ['toDate']):
@@ -64,9 +64,9 @@ def transactionsFilter():
             if isinstance(toDate, datetime.date):
                 TO_DATE_FILTER = True
             else:
-                return jsonify({"msg": "Zły typ daty"}), 400
+                return jsonify({"msg": "Bad type of date."}), 400
         except ValueError:
-            return jsonify({"msg": "Wymagana data"}), 400
+            return jsonify({"msg": "Date is required."}), 400
 
     CREDIT_CARD_FILTER = False
     if is_input_json(request, ['idCreditCard']):
@@ -74,23 +74,29 @@ def transactionsFilter():
             idCreditCard = int(request.json['idCreditCard'])
             CREDIT_CARD_FILTER = True
         except ValueError:
-            return jsonify({'msg': 'Numer karty musi być liczbą.'}), 401
+            return jsonify({'msg': 'The card id must be a number.'}), 401
 
     FROM_AMOUNT_FILTER = False
     if is_input_json(request, ['fromAmount']):
         try:
             fromAmount = float(request.json['fromAmount'])
-            FROM_AMOUNT_FILTER = True
+            if fromAmount > 0:
+                FROM_AMOUNT_FILTER = True
+            else:
+                return jsonify({'msg': 'The account number must be a positive number.'}), 401
         except ValueError:
-            return jsonify({'msg': 'Kwota przelewu musi być liczbą.'}), 401
+            return jsonify({'msg': 'The account number must be a number.'}), 401
 
     TO_AMOUNT_FILTER = False
     if is_input_json(request, ['toAmount']):
         try:
             toAmount = float(request.json['toAmount'])
-            TO_AMOUNT_FILTER = True
+            if toAmount > 0:
+                TO_AMOUNT_FILTER = True
+            else:
+                return jsonify({'msg': 'The account number must be a positive number.'}), 401
         except ValueError:
-            return jsonify({'msg': 'Kwota przelewu musi być liczbą.'}), 401
+            return jsonify({'msg': 'The account number must be a number.'}), 401
 
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -186,7 +192,7 @@ def transactionsOfAccount(idAccount):
         idTransactions = get_idTransfers_of_Account(idAccount)
         return get_info_about_transcation(idTransactions, 'JSON')
     else:
-        return jsonify({"msg": "Brak dostępu"}), 401
+        return jsonify({"msg": "Access restricted"}), 401
 
 
 # generowanie PDFa
@@ -195,16 +201,16 @@ def transactionsOfAccount(idAccount):
 def generatePDF():
     if request.method == 'POST':
         if not is_input_json(request, ['idTransactions']):
-            return jsonify({"msg": "Błąd związany z JSONem."}), 400
+            return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
         if not isinstance(request.json['idTransactions'], int):
-            return jsonify({"msg": "Identyfikator transakcji musi być typu int"}), 400
+            return jsonify({"msg": "Transaction id must be a number."}), 400
 
         idTrans = request.json['idTransactions']
 
         # sprawdzanie czy transakcja należy do konta zalogowanego użytkownika
         if not is_account_of_transaction(idTrans):
-            return jsonify({"msg": "Brak dostępu do tej transakcji"}), 400
+            return jsonify({"msg": "Access restricted."}), 400
 
         infoTrans = get_info_about_transcation(idTrans, '')
 
@@ -227,7 +233,7 @@ def generatePDF():
 
         response = make_response(pdf)
         response.headers['Content-Type']='application/pdf'
-        response.headers['Content-Disposition']='inline; filename=potwierdzenie-'+str(idTrans)+'.pdf'
+        response.headers['Content-Disposition']='inline; filename=receipt-'+str(idTrans)+'.pdf'
 
         return response
 

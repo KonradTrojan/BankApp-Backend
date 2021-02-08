@@ -15,7 +15,7 @@ loginblueprint = Blueprint('loginblueprint', __name__)
 def loginJWT():
     # sprawdzanie danych wejściowych
     if not is_input_json(request, ['username', 'password']):
-        return jsonify({"msg": "Błąd związany z JSONem."}), 400
+        return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     username = request.json.get('username', None)
     password = request.json.get('password', None)
@@ -30,11 +30,11 @@ def loginJWT():
         hash_ = data[0]
         idCustomers = data[1]
     except TypeError:
-        return jsonify({"msg": "Błędny login lub hasło"}), 401
+        return jsonify({"msg": "Bad username or password"}), 401
 
     # hashowanie i porównanie haseł
     if not sha256.verify(password, hash_):
-        return jsonify({"msg": "Błędny login lub hasło"}), 401
+        return jsonify({"msg": "Bad username or password"}), 401
     ret = {
         'access_token': create_access_token(identity=idCustomers, expires_delta=get_expires_time()),
         'refresh_token': create_refresh_token(identity=idCustomers, expires_delta=get_expires_time())
@@ -48,7 +48,7 @@ def loginJWT():
 def logout():
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
-    return jsonify({"msg": "Wylogowywanie pomyślne."}), 200
+    return jsonify({"msg": "Log out successfully."}), 200
 
 
 @loginblueprint.route('/logoutjwtrefresh', methods=['DELETE'])
@@ -56,7 +56,7 @@ def logout():
 def logout2():
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
-    return jsonify({"msg": "Wylogowywanie pomyślne."}), 200
+    return jsonify({"msg": "Log out successfully.."}), 200
 
 
 # dodawanie wygasłych tokenów do blacklisty

@@ -39,15 +39,15 @@ def accountsOfCustomer():
     elif request.method == 'DELETE':
 
         if not is_input_json(request, ['idAccounts']):
-            return jsonify({"msg": "Błąd związany z JSONem."}), 400
+            return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
-        idAccounts = request.json['idAccounts']
-
-        if not isinstance(idAccounts, int):
-            return jsonify({'msg': 'Zły typ'}), 401
+        try:
+            idAccounts = int(request.json['idAccounts'])
+        except ValueError:
+            return jsonify({"msg": "Bad type."}), 400
 
         if not isOwner(get_jwt_identity(), idAccounts):
-            return jsonify({'msg': 'Brak dostępu'}), 401
+            return jsonify({'msg': 'Restricted access'}), 401
 
         # rozpoczęcie transakcji
         try:
@@ -60,13 +60,12 @@ def accountsOfCustomer():
             conn.commit()
 
         except mysql.connect.Error as error:
-            # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
             cursor.rollback()
-            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
+            return jsonify({'msg': "Connect with Data Base unsuccessfully.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Usunięcie zakończone pomyślnie"}), 200
+            return jsonify({'msg': "The account has been deleted."}), 200
 
     # Dodawanie kont
     elif request.method == 'POST':
@@ -85,10 +84,10 @@ def accountsOfCustomer():
 
         except mysql.connect.Error as error:
             cursor.rollback()
-            return jsonify({'msg': "Błąd w połączeniu z Bazą Danych.", 'error': error}), 401
+            return jsonify({'msg': "Connect with Data Base unsuccessfully.", 'error': error}), 401
         finally:
             cursor.close()
             conn.close()
-            return jsonify({'msg': "Konto dodane pomyślnie"}), 200
+            return jsonify({'msg': "The account has been added"}), 200
 
 

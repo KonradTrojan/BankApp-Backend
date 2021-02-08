@@ -9,30 +9,28 @@ transferBlueprint = Blueprint("transferBlueprint", __name__)
 def transfer():
 
     if not is_input_json(request, ['title', 'accountNumber', 'fromAccount', 'amount']):
-        return jsonify({"msg": "Błąd związany z JSONem."}), 400
+        return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     # Rzutowanie numerów kont na int i tytułu na str
     try:
-        if isinstance(request.json['title'], int) or isinstance(request.json['title'], float):
-            return jsonify({'msg': 'Tytuł nie może być liczbą.'}), 401
-
+        #TODO dodać sprawdzanie za pomocą wyrażeń regualrnych, czy tytuł nie ma nieodpwoednich znaków
         title = str(request.json['title'])
         toAccountNum = int(request.json['accountNumber'])
         fromAccountNum = int((request.json['fromAccount']))
     except ValueError:
-        return jsonify({'msg': 'Numer konta musi być liczbą.'}), 401
+        return jsonify({'msg': 'The account number must be a number.'}), 401
 
     if toAccountNum == fromAccountNum:
-        return jsonify({'msg': 'Nie można dokonać przelewu między tym samym kontem.'}), 401
+        return jsonify({'msg': 'Transfer between the same accounts is not allowed.'}), 401
 
 
     # sprawdzanie czy kwota ma odpowiedni typ i jest dodatnia
     try:
         amount = float(request.json['amount'])
         if amount <= 0:
-            return jsonify({'msg': 'Kwota przelewu nie może być ujemna lub równa 0.'}), 401
+            return jsonify({'msg': 'Amount of the transfer must be a positive number.'}), 401
     except ValueError:
-        return jsonify({'msg': 'Kwota przelewu musi być liczbą.'}), 401
+        return jsonify({'msg': 'Amount of the transfer must be a number.'}), 401
 
     # przypisanie idAccount na podstawie numeru konta
     senderId = account_number_to_idAccounts(fromAccountNum)
@@ -40,11 +38,11 @@ def transfer():
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
     if recipientId is None or senderId is None:
-        return jsonify({'msg': 'Nie istnieje taki numer konta.'}), 401
+        return jsonify({'msg': 'This account does not exist.'}), 401
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
     if not isOwner(get_jwt_identity(), senderId):
-        return jsonify({'msg': 'Brak dostępu do tego konta.'}), 401
+        return jsonify({'msg': 'Restricted access.'}), 401
 
     # rozpoczęcie transakcji
     try:
@@ -74,11 +72,11 @@ def transfer():
     except mysql.connect.Error as error:
         # przy wystąpieniu jakiegoś błędu, odrzucenie transakcji
         cursor.rollback()
-        return jsonify({'msg': "Transakcja odrzucona", 'error': error}), 401
+        return jsonify({'msg': "Transfer rejected", 'error': error}), 401
     finally:
         cursor.close()
         conn.close()
-        return jsonify({'msg': "Transakcja zakończona pomyślnie"}), 200
+        return jsonify({'msg': "Transfer approved"}), 200
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()
