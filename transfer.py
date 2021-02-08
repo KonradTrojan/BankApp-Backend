@@ -54,8 +54,11 @@ def transfer():
     cursor = conn.cursor()
 
     # sprawdzenie czy na kocie jest wystarczająco pięniędzy
-    if not has_money(senderId, amount):
-        return jsonify({'msg': "Not enough money on the account."}), 401
+    try:
+        if not has_money(senderId, amount):
+            return jsonify({'msg': "Not enough money on the account."}), 401
+    except TypeError:
+        return jsonify({'msg': "przy has money."}), 401
     else:
         try:
             old_balance = get_balance(senderId)
