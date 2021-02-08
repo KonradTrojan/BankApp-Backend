@@ -54,9 +54,10 @@ def transfer():
         cursor = conn.cursor()
 
         # sprawdzenie czy na kocie jest wystarczająco pięniędzy
-        if not hasMoney(senderId, amount):
-            return jsonify({'msg': "Nie wystarczające środki na koncie."}), 401
-        balance = hasMoney(senderId, amount)
+        if not has_money(senderId, amount):
+            return jsonify({'msg': "Not enough money on the account."}), 401
+        old_balance = get_balance(senderId)
+        new_balance = get_balance_after_transfer(senderId, amount)
 
         # aktualizacja stanu konta u wysyłającego
         sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
@@ -69,7 +70,7 @@ def transfer():
         # dodanie do wpisu o transakcji
         sql = """INSERT INTO transactions (date, amountOfTransaction, idAccounts, idAccountsOfRecipient, 
         old_balance, new_balance, message, 	idCreditCards) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, balance, balance - amount, title, None])
+        cursor.execute(sql, [datetime.now(), amount, senderId, recipientId, old_balance, new_balance, title, None])
 
         conn.commit()
 
@@ -83,15 +84,20 @@ def transfer():
         return jsonify({'msg': "Transfer approved"}), 200
 
 
-def hasMoney(accountsId, amount):
+def has_money(idAcc, amount):
+    if get_balance_after_transfer(idAcc, amount) >= 0:
+        return True
+    else:
+        return False
+
+def get_balance_after_transfer(idAcc, amount):
+    return get_balance(idAcc) - amount
+
+def get_balance(idAcc):
     conn = mysql.connect()
     cursor = conn.cursor()
     sql = """SELECT balance FROM accounts WHERE idAccounts = %s """
-    cursor.execute(sql, [accountsId])
+    cursor.execute(sql, [idAcc])
     data = cursor.fetchone()
 
-    balance = float(data[0])
-    if balance - amount >= 0:
-        return balance
-    else:
-        return False
+    return float(data[0])
