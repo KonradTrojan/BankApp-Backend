@@ -107,15 +107,15 @@ def creditCardsOfAccount(idAccount):
 def limit():
     if not is_input_json(request, ['idCard', 'limit']):
         return jsonify({"msg": "Błąd związany z JSONem."}), 400
-
-    idCard = request.json['idCard']
-    limit = request.json['limit']
+    try:
+        idCard = int(request.json['idCard'])
+        limit = float(request.json['limit'])
+    except ValueError:
+        return jsonify({"msg": "Zły typ"})
 
     if not isinstance(idCard, int):
         return jsonify({'msg': 'Zły typ'}), 401
 
-    if not (isinstance(limit, int) or isinstance(limit, float)):
-        return jsonify({'msg': 'Zły typ '}), 401
 
     if limit <= 0:
         return jsonify({'msg': 'Limit musi być dodatni'}), 401
