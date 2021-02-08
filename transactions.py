@@ -219,7 +219,7 @@ def generatePDF():
             idAccounts = idAccount_to_saccount_number(infoTrans[0]),
             idAccountsOfRecipient = idAccount_to_saccount_number(infoTrans[1]),
             amountOfTransaction = infoTrans[2],
-            idCreditCards = infoTrans[3],
+            date = infoTrans[3],
             old_balance = infoTrans[4],
             new_balance = infoTrans[5],
             message = infoTrans[6])
@@ -272,7 +272,7 @@ def get_info_about_transcation(idTransactions, type):
             'idAccounts': userData[0],
             'idAccountsOfRecipient': userData[1],
             'amountOfTransaction': userData[2],
-            'idCreditCards': userData[3],
+            'date': userData[3],
             'old_balance': userData[4],
             'new_balance': userData[5],
             'message': userData[6]
