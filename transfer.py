@@ -56,8 +56,10 @@ def transfer():
         # sprawdzenie czy na kocie jest wystarczająco pięniędzy
         if not has_money(senderId, amount):
             return jsonify({'msg': "Not enough money on the account."}), 401
-        old_balance = get_balance(senderId)
-        new_balance = get_balance_after_transfer(senderId, amount)
+        else:
+            return jsonify({'msg': "enough money on the account."}), 401
+            old_balance = get_balance(senderId)
+            new_balance = get_balance_after_transfer(senderId, amount)
 
         # aktualizacja stanu konta u wysyłającego
         sql = """UPDATE accounts SET balance=(balance-%s) where idAccounts = %s"""
