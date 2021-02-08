@@ -79,15 +79,14 @@ def refresh():
 @loginblueprint.route('/expires_time', methods=['GET'])
 @jwt_required
 def expires_time():
-    time = datetime.datetime.strptime(str(get_expires_time()), '%H:%M:%S')
     ret = {
-        'expires_time_in_seconds': time.second
+        'expires_time_in_minutes': get_default_time()
     }
     return jsonify(ret), 200
 
 def get_expires_time():
-    return datetime.timedelta(seconds=get_default_time())
+    return datetime.timedelta(minutes=get_default_time())
 
 def get_default_time():
-    seconds = 60
-    return seconds
+    minutes = 1
+    return minutes
