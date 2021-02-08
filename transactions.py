@@ -80,12 +80,12 @@ def transactionsFilter():
     if is_input_json(request, ['fromAmount']):
         try:
             fromAmount = float(request.json['fromAmount'])
-            if fromAmount > 0:
+            if fromAmount >= 0:
                 FROM_AMOUNT_FILTER = True
             else:
-                return jsonify({'msg': 'The account number must be a positive number.'}), 401
+                return jsonify({'msg': 'The amount must be a positive number.'}), 401
         except ValueError:
-            return jsonify({'msg': 'The account number must be a number.'}), 401
+            return jsonify({'msg': 'The amount must be a number.'}), 401
 
     TO_AMOUNT_FILTER = False
     if is_input_json(request, ['toAmount']):
@@ -94,9 +94,9 @@ def transactionsFilter():
             if toAmount > 0:
                 TO_AMOUNT_FILTER = True
             else:
-                return jsonify({'msg': 'The account number must be a positive number.'}), 401
+                return jsonify({'msg': 'The amount must be a positive number.'}), 401
         except ValueError:
-            return jsonify({'msg': 'The account number must be a number.'}), 401
+            return jsonify({'msg': 'The amount must be a number.'}), 401
 
     conn = mysql.connect()
     cursor = conn.cursor()
