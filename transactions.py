@@ -216,9 +216,9 @@ def generatePDF():
 
         rendered = render_template('pdf_template.html', 
             idTransactions  = idTrans, 
-            idAccounts = infoTrans[0],
+            idAccounts = account_number_to_idAccounts(infoTrans[0]),
             idAccountsOfRecipient = account_number_to_idAccounts(infoTrans[1]),
-            amountOfTransaction = account_number_to_idAccounts(infoTrans[2]),
+            amountOfTransaction = infoTrans[2],
             idCreditCards = infoTrans[3],
             old_balance = infoTrans[4],
             new_balance = infoTrans[5],
