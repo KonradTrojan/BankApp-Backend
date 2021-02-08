@@ -87,29 +87,19 @@ def transfer():
 '''
 
 def has_money(idAcc, amount):
-    try:
-        if get_balance_after_transfer(idAcc, amount) >= 0:
-            return True
-        else:
-            return False
-    except TypeError:
-        return jsonify({'msg': "1"}), 401
-
+    if get_balance_after_transfer(idAcc, amount) >= 0:
+        return True
+    else:
+        return False
 
 def get_balance_after_transfer(idAcc, amount):
-    try:
-        return get_balance(idAcc) - amount
-    except TypeError:
-        return jsonify({'msg': "2"}), 401
+    return get_balance(idAcc) - amount
 
 def get_balance(idAcc):
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        sql = """SELECT balance FROM accounts WHERE idAccounts = %s """
-        cursor.execute(sql, [idAcc])
-        data = cursor.fetchone()
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = """SELECT balance FROM accounts WHERE idAccounts = %s """
+    cursor.execute(sql, [idAcc])
+    data = cursor.fetchone()
 
-        return float(data[0])
-    except TypeError:
-        return jsonify({'msg': "1"}), 401
+    return data[0]
