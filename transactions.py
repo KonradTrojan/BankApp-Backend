@@ -227,7 +227,7 @@ def generatePDF():
 
         response = make_response(pdf)
         response.headers['Content-Type']='application/pdf'
-        response.headers['Content-Disposition']='inline; filename=potwierdzenie-'+idTrans+'.pdf'
+        response.headers['Content-Disposition']='inline; filename=potwierdzenie-'+str(idTrans)+'.pdf'
 
         return response
 
