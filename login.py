@@ -88,5 +88,5 @@ def get_expires_time():
     return datetime.timedelta(minutes=get_default_time())
 
 def get_default_time():
-    minutes = 1
+    minutes = 10
     return minutes
