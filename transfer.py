@@ -88,11 +88,8 @@ def transfer():
         cursor.rollback()
         return jsonify({'msg': "Transfer rejected", 'error': error}), 401
     finally:
-        flaga = 11
         cursor.close()
-        flaga = 12
         conn.close()
-        flaga = 13
         return jsonify({'msg': "Transfer approved", "er": flaga}), 200
 
 
