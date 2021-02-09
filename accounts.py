@@ -58,7 +58,7 @@ def accountsOfCustomer():
 
             if data[0] == 0:
                 # Usuwanie konta - triggery w BD zadbają, żeby usunąć wszystkie wpisy powiązane z tym kontem
-                sql = """DELETE FROM accounts WHERE idAccounts = %s"""
+                sql = """DELETE FROM owners WHERE idAccounts = %s"""
                 cursor.execute(sql, [idAccounts])
 
                 # commit zmian
