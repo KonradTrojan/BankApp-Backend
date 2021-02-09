@@ -102,7 +102,7 @@ def account_number_to_idAccounts(accountNum):
     except TypeError:
         return None
 
-def idAccount_to_saccount_number(idAcc):
+def idAccount_to_account_number(idAcc):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
