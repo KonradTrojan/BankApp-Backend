@@ -7,6 +7,8 @@ import datetime
 
 transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
+
+
 # wyświetla wszystkie transakcje danego użytkownika
 @transactionsblueprint.route('/transactions', methods=['POST'])
 @jwt_required
@@ -157,6 +159,7 @@ def transactionsFilter():
 
     myJson = []
 
+    # pobranie liczby wierszy, które przeszły przez filtr
     countSQL += sql
     cursor.execute(countSQL, bindingTable)
     record = cursor.fetchone()
@@ -164,6 +167,7 @@ def transactionsFilter():
 
     mainSQL += sql
 
+    # wiersz, które spełniają filtry
     mainSQL += """ ORDER BY date DESC LIMIT %s OFFSET %s"""
     bindingTable.append(limit)
     bindingTable.append(offset)
@@ -237,8 +241,8 @@ def generatePDF():
 
         rendered = render_template('pdf_template.html', 
             idTransactions  = idTrans, 
-            idAccounts = idAccount_to_saccount_number(infoTrans[0]),
-            idAccountsOfRecipient = idAccount_to_saccount_number(infoTrans[1]),
+            idAccounts = idAccount_to_account_number(infoTrans[0]),
+            idAccountsOfRecipient = idAccount_to_account_number(infoTrans[1]),
             amountOfTransaction = infoTrans[2],
             date = infoTrans[3],
             old_balance = infoTrans[4],
