@@ -164,8 +164,8 @@ def transactionsFilter():
     myJson = []
     for row in records:
         myJson.append({
-            'idAccounts': row[0],
-            'idAccountsOfRecipient': row[1],
+            'idAccounts': idAccount_to_account_number(row[0]),
+            'idAccountsOfRecipient': idAccount_to_account_number(row[1]),
             'amountOfTransaction': row[2],
             'date': row[3],
             'old_balance': row[4],
