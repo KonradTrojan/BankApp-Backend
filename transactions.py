@@ -158,7 +158,7 @@ def transactionsFilter():
     myJson = []
 
     countSQL += sql
-    cursor.execute(mainSQL, bindingTable)
+    cursor.execute(countSQL, bindingTable)
     record = cursor.fetchone()
     myJson.append({'rowsNumber': record[0]})
 
