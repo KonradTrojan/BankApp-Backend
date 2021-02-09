@@ -15,7 +15,7 @@ def transfer():
         return jsonify({"msg": "Missing or bad JSON in request."}), 400
 
     title = str(request.json['title'])
-    if not re.match('^[\s.,?()a-zA-Z0-9]+$', title):
+    if not re.match('^[\s.,?()ąćęśńłóżźa-zA-Z0-9]+$', title):
         return jsonify({"msg": "Allowed special characters are ,.?()"}), 401
 
     # Rzutowanie numerów kont na int
