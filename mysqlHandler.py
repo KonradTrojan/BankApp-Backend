@@ -97,14 +97,12 @@ def is_active_account(idAcc):
         sql = """select idAccounts from owners where idAccounts = %s """
         cursor.execute(sql, [idAcc])
         data = cursor.fetchone()
-        if int(data[0]) == idAcc:
-            return True
-        else:
-            return False
+        info = int(data[0])
+
+        return True
 
     except TypeError:
         return False
-
 
 
 def account_number_to_idAccounts(accountNum):
