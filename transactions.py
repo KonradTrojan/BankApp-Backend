@@ -51,7 +51,7 @@ def transactionsFilter():
     FROM_DATE_FILTER = False
     if is_input_json(request, ['fromDate']):
         try:
-            fromDate = datetime.datetime.strptime(request.json['fromDate'], '%Y-%m-%d %H:%M:%S')
+            fromDate = datetime.datetime.strptime(request.json['fromDate'], '%Y-%m-%d %H:%M')
             if isinstance(fromDate, datetime.date):
                 FROM_DATE_FILTER = True
             else:
@@ -62,7 +62,7 @@ def transactionsFilter():
     TO_DATE_FILTER = False
     if is_input_json(request, ['toDate']):
         try:
-            toDate = datetime.datetime.strptime(request.json['toDate'], '%Y-%m-%d %H:%M:%S')
+            toDate = datetime.datetime.strptime(request.json['toDate'], '%Y-%m-%d %H:%M')
             if isinstance(toDate, datetime.date):
                 TO_DATE_FILTER = True
             else:
@@ -105,9 +105,12 @@ def transactionsFilter():
 
     bindingTable = []
 
-    sql = """SELECT idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
-    message, idTransactions, idCreditCards  FROM transactions where """
+    mainSQL = """SELECT idAccounts, idAccountsOfRecipient, amountOfTransaction, date, old_balance, new_balance,
+    message, idTransactions, idCreditCards  FROM transactions WHERE """
 
+    countSQL = """SELECT count(idTransactions) FROM transactions WHERE """
+
+    sql = ''
     if FROM_DATE_FILTER and TO_DATE_FILTER:
         if fromDate < toDate:
             sql += """ (date BETWEEN %s AND %s) AND """
@@ -154,14 +157,22 @@ def transactionsFilter():
         bindingTable.append(idAccCustomer)
         bindingTable.append(idAccCustomer)
 
-    sql += """ ORDER BY date LIMIT %s OFFSET %s"""
+    myJson = []
+
+    countSQL += sql
+    cursor.execute(mainSQL, bindingTable)
+    record = cursor.fetchone()
+    myJson.append({'rowsNumber': record[0]})
+
+    mainSQL += sql
+
+    mainSQL += """ ORDER BY date DESC LIMIT %s OFFSET %s"""
     bindingTable.append(limit)
     bindingTable.append(offset)
 
-    cursor.execute(sql, bindingTable)
+    cursor.execute(mainSQL, bindingTable)
     records = cursor.fetchall()
 
-    myJson = []
     for row in records:
         myJson.append({
             'idAccounts': idAccount_to_account_number(row[0]),
