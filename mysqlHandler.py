@@ -113,7 +113,7 @@ def account_number_to_idAccounts(accountNum):
         cursor.execute(sql, [accountNum])
         data = cursor.fetchone()
 
-        return str(data[0])
+        return data[0]
     except TypeError:
         return None
 
@@ -125,7 +125,7 @@ def idAccount_to_account_number(idAcc):
         cursor.execute(sql, [idAcc])
         data = cursor.fetchone()
 
-        return str(data[0])
+        return data[0]
     except TypeError:
         sql = """select number from allOwners"""
 
