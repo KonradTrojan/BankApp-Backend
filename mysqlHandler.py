@@ -90,6 +90,23 @@ def isOwner(identity, idAcounts):
             return True
     return False
 
+def is_active_account(idAcc):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        sql = """select idAccounts from owners where idAccounts = %s """
+        cursor.execute(sql, [idAcc])
+        data = cursor.fetchone()
+        if int(data[0]) == idAcc:
+            return True
+        else:
+            return False
+
+    except TypeError:
+        return False
+
+
+
 def account_number_to_idAccounts(accountNum):
     try:
         conn = mysql.connect()
@@ -98,7 +115,7 @@ def account_number_to_idAccounts(accountNum):
         cursor.execute(sql, [accountNum])
         data = cursor.fetchone()
 
-        return data[0]
+        return str(data[0])
     except TypeError:
         return None
 

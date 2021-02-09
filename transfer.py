@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from project.mysqlHandler import mysql, isOwner, account_number_to_idAccounts, get_active_idAccounts_Of_Customer, \
-    is_input_json, round_down
+    is_input_json, round_down, is_active_account
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 
@@ -43,6 +43,9 @@ def transfer():
 
     # sprawdzanie czy do numerów są przypisane jakieś konta
     if recipientId is None or senderId is None:
+        return jsonify({'msg': 'This account does not exist.'}), 401
+
+    if not is_active_account(recipientId):
         return jsonify({'msg': 'This account does not exist.'}), 401
 
     # sprawdzanie czy dane konto należy do zalogowanego użytkownika
