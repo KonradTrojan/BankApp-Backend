@@ -94,17 +94,6 @@ def credit_cards():
             return jsonify({'msg': "The card has been added."}), 200
 
 
-# wszystkie karty przypisane do danego konta
-@credit_cardsblueprint.route('/credit_cards/<int:idAccount>', methods=['GET'])
-@jwt_required
-def creditCardsOfAccount(idAccount):
-    if isOwner(get_jwt_identity(), idAccount):
-        idCards = get_idCreditCards_of_Account(idAccount)
-        return get_info_about_cards(idCards)
-    else:
-        return jsonify({"msg": "Access restricted"}), 401
-
-
 # zmiana limitu kart
 @credit_cardsblueprint.route('/credit_cards/limit', methods=['POST'])
 @jwt_required

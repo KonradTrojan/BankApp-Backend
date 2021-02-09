@@ -89,8 +89,10 @@ def expires_time():
     }
     return jsonify(ret), 200
 
+
 def get_expires_time():
     return datetime.timedelta(minutes=get_default_time())
+
 
 def get_default_time():
     minutes = 10

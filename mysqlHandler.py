@@ -127,7 +127,8 @@ def idAccount_to_account_number(idAcc):
 
         return data[0]
     except TypeError:
-        sql = """select number from allOwners"""
+        return None
+
 
 def hasMoney(accountsId, amount):
     conn = mysql.connect()

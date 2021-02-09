@@ -5,8 +5,8 @@ from flask import render_template, make_response
 import pdfkit
 import datetime
 
-transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
+transactionsblueprint = Blueprint('transactionsblueprint', __name__)
 
 
 # wyświetla wszystkie transakcje danego użytkownika
@@ -240,25 +240,24 @@ def generatePDF():
         config = pdfkit.configuration(wkhtmltopdf='/opt/wkhtmltopdf/bin/wkhtmltopdf')
 
         rendered = render_template('pdf_template.html', 
-            idTransactions  = idTrans, 
-            idAccounts = idAccount_to_account_number(infoTrans[0]),
-            idAccountsOfRecipient = idAccount_to_account_number(infoTrans[1]),
-            amountOfTransaction = infoTrans[2],
-            date = infoTrans[3],
-            old_balance = infoTrans[4],
-            new_balance = infoTrans[5],
-            message = infoTrans[6])
+            idTransactions=idTrans,
+            idAccounts=idAccount_to_account_number(infoTrans[0]),
+            idAccountsOfRecipient=idAccount_to_account_number(infoTrans[1]),
+            amountOfTransaction=infoTrans[2],
+            date=infoTrans[3],
+            old_balance=infoTrans[4],
+            new_balance=infoTrans[5],
+            message=infoTrans[6])
         pdf = pdfkit.from_string(rendered, False, configuration=config)
 
         response = make_response(pdf)
-        response.headers['Content-Type']='application/pdf'
-        response.headers['Content-Disposition']='inline; filename=receipt-'+str(idTrans)+'.pdf'
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'inline; filename=receipt-'+str(idTrans)+'.pdf'
 
         return response
 
 
 def is_account_of_transaction(idTransaction):
-
     accountsList = get_active_idAccounts_Of_Customer(get_jwt_identity())
     for idAcc in accountsList:
         for idTran in get_idTransfers_of_Account(idAcc):
