@@ -206,7 +206,6 @@ def transactions():
 
 
 # wyświetla wszystkie transakcje na koncie o podanym idAccount
-# TODO sprawdzić, czy potrzebne, jeśli tak to zmienić pobieranie danych z tablicy owners na allOwners
 @transactionsblueprint.route('/transactions/<int:idAccount>', methods=['GET'])
 @jwt_required
 def transactionsOfAccount(idAccount):
